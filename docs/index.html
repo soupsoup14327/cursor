@@ -28,13 +28,48 @@
           </span>
           <span class="brand__word">Mobbin</span>
         </a>
-        <nav class="nav-links">
+        <nav class="nav-links nav-links--desktop" aria-label="Primary links">
           <button type="button" class="nav-links__item" data-scroll="#pricing">Pricing</button>
           <button type="button" class="nav-links__item" data-scroll="#awards">Awards</button>
           <button type="button" class="nav-links__item">Log in</button>
         </nav>
-        <button type="button" class="btn btn--black">Join for free</button>
+        <button type="button" class="btn btn--black nav-cta--desktop">Join for free</button>
+        <button
+          type="button"
+          class="nav-burger"
+          id="navBurger"
+          aria-expanded="false"
+          aria-controls="navMobilePanel"
+          aria-label="Open menu"
+        >
+          <span class="nav-burger__bar" aria-hidden="true"></span>
+          <span class="nav-burger__bar" aria-hidden="true"></span>
+          <span class="nav-burger__bar" aria-hidden="true"></span>
+        </button>
       </header>
+    </div>
+
+    <div class="nav-mobile" id="navMobile" aria-hidden="true">
+      <div class="nav-mobile__backdrop" data-nav-close tabindex="-1"></div>
+      <div
+        class="nav-mobile__panel"
+        id="navMobilePanel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site menu"
+        tabindex="-1"
+      >
+        <div class="nav-mobile__head">
+          <span class="nav-mobile__title">Menu</span>
+          <button type="button" class="nav-mobile__close" data-nav-close aria-label="Close menu">×</button>
+        </div>
+        <nav class="nav-mobile__links" aria-label="Mobile">
+          <button type="button" class="nav-mobile__link" data-scroll="#pricing">Pricing</button>
+          <button type="button" class="nav-mobile__link" data-scroll="#awards">Awards</button>
+          <button type="button" class="nav-mobile__link">Log in</button>
+        </nav>
+        <button type="button" class="btn btn--black nav-mobile__cta">Join for free</button>
+      </div>
     </div>
 
     <main id="top">

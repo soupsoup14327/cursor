@@ -130,6 +130,178 @@
   opacity: 0.7;
 }
 
+/* Mobile burger (hidden on desktop) */
+.nav-burger {
+  display: none;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.65);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.nav-burger__bar {
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--text);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease;
+}
+
+body.nav-menu-open .nav-burger .nav-burger__bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+body.nav-menu-open .nav-burger .nav-burger__bar:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+body.nav-menu-open .nav-burger .nav-burger__bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (max-width: 768px) {
+  .nav-pill {
+    flex-wrap: nowrap;
+    width: min(100%, 420px);
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .nav-links--desktop,
+  .nav-cta--desktop {
+    display: none;
+  }
+
+  .nav-burger {
+    display: flex;
+  }
+}
+
+/* Mobile menu overlay + blurred panel */
+.nav-mobile {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.25s ease, visibility 0.25s;
+}
+
+.nav-mobile.nav-mobile--open {
+  pointer-events: auto;
+  visibility: visible;
+  opacity: 1;
+}
+
+.nav-mobile__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+}
+
+.nav-mobile__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(100%, 320px);
+  max-width: 100%;
+  background: rgba(255, 255, 255, 0.82);
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.1);
+  padding: 20px 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.nav-mobile.nav-mobile--open .nav-mobile__panel {
+  transform: translateX(0);
+}
+
+.nav-mobile__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.nav-mobile__title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.nav-mobile__close {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.05);
+  font-size: 24px;
+  line-height: 1;
+  color: var(--text);
+}
+
+.nav-mobile__links {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-mobile__link {
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 14px 12px;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.nav-mobile__link:active {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.nav-mobile__cta {
+  margin-top: auto;
+  width: 100%;
+  justify-content: center;
+}
+
+@media (min-width: 769px) {
+  .nav-mobile {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-mobile__panel {
+    transition: none;
+  }
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;

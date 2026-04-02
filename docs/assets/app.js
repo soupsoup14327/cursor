@@ -37,6 +37,59 @@
     btn.addEventListener("click", () => bar.classList.add("is-hidden"));
   }
 
+  function setupMobileNav() {
+    const root = document.getElementById("navMobile");
+    const burger = document.getElementById("navBurger");
+    const panel = document.getElementById("navMobilePanel");
+    if (!root || !burger) return;
+
+    const closeEls = Array.from(root.querySelectorAll("[data-nav-close]"));
+
+    const close = () => {
+      if (!root.classList.contains("nav-mobile--open")) return;
+      root.classList.remove("nav-mobile--open");
+      root.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("nav-menu-open");
+      burger.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
+      burger.focus();
+    };
+
+    const open = () => {
+      root.classList.add("nav-mobile--open");
+      root.setAttribute("aria-hidden", "false");
+      document.body.classList.add("nav-menu-open");
+      burger.setAttribute("aria-expanded", "true");
+      document.body.style.overflow = "hidden";
+      panel?.focus();
+    };
+
+    burger.addEventListener("click", () => {
+      if (root.classList.contains("nav-mobile--open")) close();
+      else open();
+    });
+
+    closeEls.forEach((el) => el.addEventListener("click", close));
+
+    root.querySelectorAll("[data-scroll]").forEach((btn) => {
+      btn.addEventListener("click", () => close());
+    });
+
+    root.querySelector(".nav-mobile__cta")?.addEventListener("click", close);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && root.classList.contains("nav-mobile--open")) close();
+    });
+
+    window.addEventListener(
+      "resize",
+      () => {
+        if (window.innerWidth > 768 && root.classList.contains("nav-mobile--open")) close();
+      },
+      { passive: true }
+    );
+  }
+
   function setupFab() {
     const fab = document.getElementById("fabTop");
     if (!fab) return;
@@ -351,6 +404,7 @@
 
   setupReveal();
   setupAnnouncement();
+  setupMobileNav();
   setupFab();
   setupCounters();
   setupStatsScroll();
