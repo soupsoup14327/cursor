@@ -1,0 +1,234 @@
+/* Binrobi landing — minimalist hero */
+
+.binrobi-page {
+  --binrobi-bg: #f2f2f2;
+  --binrobi-fg: #000000;
+  --binrobi-pad: clamp(20px, 4vw, 48px);
+  --binrobi-max: 1240px;
+
+  background: var(--binrobi-bg);
+  color: var(--binrobi-fg);
+  min-height: 100vh;
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.binrobi-shell {
+  max-width: var(--binrobi-max);
+  margin: 0 auto;
+  padding: var(--binrobi-pad);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.binrobi-header {
+  flex-shrink: 0;
+  padding-bottom: clamp(24px, 5vh, 56px);
+}
+
+.binrobi-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.binrobi-brand__mark {
+  display: flex;
+  color: currentColor;
+}
+
+.binrobi-brand__word {
+  text-transform: lowercase;
+}
+
+.binrobi-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-height: 0;
+}
+
+.binrobi-hero {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: center;
+}
+
+.binrobi-hero__visual {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: min(72vh, 640px);
+}
+
+.binrobi-hero__visual::after {
+  content: "";
+  position: absolute;
+  inset: 12% 8% 0;
+  background: radial-gradient(ellipse 70% 50% at 50% 100%, rgba(0, 0, 0, 0.06), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.binrobi-hero__img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  object-fit: contain;
+  object-position: center bottom;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.binrobi-hero__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(20px, 3vh, 32px);
+  padding: clamp(8px, 2vw, 16px) 0;
+  max-width: 34ch;
+}
+
+.binrobi-hero__title {
+  margin: 0;
+  font-size: clamp(2.75rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.binrobi-hero__slogan {
+  margin: 0;
+  font-size: clamp(1.75rem, 3.8vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+
+.binrobi-hero__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(20px, 4vw, 48px);
+  padding-top: 8px;
+}
+
+.binrobi-hero__links a {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--binrobi-fg);
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 2px;
+  transition: opacity 0.2s ease;
+}
+
+.binrobi-hero__links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.binrobi-hero__links a:hover {
+  opacity: 0.75;
+}
+
+.binrobi-hero__links a:hover::after,
+.binrobi-hero__links a:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.binrobi-hero__links a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+@media (max-width: 900px) {
+  .binrobi-hero {
+    grid-template-columns: 1fr;
+    gap: clamp(32px, 6vw, 48px);
+    text-align: center;
+  }
+
+  .binrobi-hero__visual {
+    min-height: min(52vh, 420px);
+    order: -1;
+  }
+
+  .binrobi-hero__img {
+    max-width: min(400px, 100%);
+    margin: 0 auto;
+  }
+
+  .binrobi-hero__content {
+    max-width: none;
+    align-items: center;
+  }
+
+  .binrobi-hero__links {
+    justify-content: center;
+  }
+
+  .binrobi-hero__links a::after {
+    transform-origin: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .binrobi-hero__links a::after {
+    transition: none;
+  }
+}
+
+/* Intro motion */
+.binrobi-hero__content > * {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: binrobi-in 0.85s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.binrobi-hero__title {
+  animation-delay: 0.05s;
+}
+
+.binrobi-hero__slogan {
+  animation-delay: 0.14s;
+}
+
+.binrobi-hero__links {
+  animation-delay: 0.24s;
+}
+
+@keyframes binrobi-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .binrobi-hero__content > * {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

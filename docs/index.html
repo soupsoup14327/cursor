@@ -1,404 +1,58 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mobbin — UI &amp; UX design inspiration (demo)</title>
+    <title>Binrobi — смартфон, за который не надо платить</title>
     <meta name="color-scheme" content="light" />
-    <link rel="stylesheet" href="assets/styles/tokens.css" />
-    <link rel="stylesheet" href="assets/styles/site.css" />
+    <meta name="description" content="Binrobi — смартфон, за который не надо платить. Забронируйте или узнайте больше." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/styles/tokens.css?v=1" />
+    <link rel="stylesheet" href="assets/styles/binrobi.css?v=1" />
   </head>
-  <body>
-    <div class="announcement" id="announcement" role="region" aria-label="Announcement">
-      <div class="announcement__inner">
-        <span class="announcement__badge">2025</span>
-        <span class="announcement__text">Mobbin Awards — Celebrating the best on the internet.</span>
-        <span class="announcement__arrow" aria-hidden="true">→</span>
-      </div>
-      <button type="button" class="announcement__close" id="announcementClose" aria-label="Close announcement">×</button>
-    </div>
-
-    <div class="nav-wrap">
-      <header class="nav-pill" aria-label="Primary">
-        <a class="brand brand--nav" href="#top">
-          <span class="brand__mark" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 4h4l4 8 4-8h4v16h-3.5V9.5L14.5 20h-1L9 11.5 6 16V4z" fill="currentColor" />
+  <body class="binrobi-page">
+    <div class="binrobi-shell">
+      <header class="binrobi-header">
+        <a class="binrobi-brand" href="#top" id="top">
+          <span class="binrobi-brand__mark" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="3.5" y="3.5" width="17" height="17" rx="2" stroke="currentColor" stroke-width="1.5" />
+              <line x1="7" y1="17" x2="17" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
             </svg>
           </span>
-          <span class="brand__word">Mobbin</span>
+          <span class="binrobi-brand__word">binrobi</span>
         </a>
-        <nav class="nav-links nav-links--desktop" aria-label="Primary links">
-          <button type="button" class="nav-links__item" data-scroll="#pricing">Pricing</button>
-          <button type="button" class="nav-links__item" data-scroll="#awards">Awards</button>
-          <button type="button" class="nav-links__item">Log in</button>
-        </nav>
-        <button type="button" class="btn btn--black nav-pill__join">Join for free</button>
-        <button
-          type="button"
-          class="nav-burger"
-          id="navBurger"
-          aria-expanded="false"
-          aria-controls="navMobileSheet"
-          aria-label="Open menu"
-        >
-          <span class="nav-burger__bar" aria-hidden="true"></span>
-          <span class="nav-burger__bar" aria-hidden="true"></span>
-          <span class="nav-burger__bar" aria-hidden="true"></span>
-        </button>
       </header>
-    </div>
 
-    <div class="nav-mobile" id="navMobile" aria-hidden="true">
-      <div
-        class="nav-mobile__sheet"
-        id="navMobileSheet"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Site menu"
-        tabindex="-1"
-      >
-        <div class="nav-mobile__top">
-          <a class="nav-mobile__brand" href="#top" data-nav-close>
-            <span class="brand__mark" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 4h4l4 8 4-8h4v16h-3.5V9.5L14.5 20h-1L9 11.5 6 16V4z" fill="currentColor" />
-              </svg>
-            </span>
-            <span>Mobbin</span>
-          </a>
-          <button type="button" class="nav-mobile__close" data-nav-close aria-label="Close menu">
-            <span class="nav-mobile__close-line" aria-hidden="true"></span>
-            <span class="nav-mobile__close-line" aria-hidden="true"></span>
-          </button>
-        </div>
-        <p class="nav-mobile__lede">Design inspiration for mobile &amp; web</p>
-        <nav class="nav-mobile__links" aria-label="Mobile">
-          <button type="button" class="nav-mobile__link" data-scroll="#pricing">
-            <span class="nav-mobile__link-text">Pricing</span>
-            <span class="nav-mobile__chev" aria-hidden="true">→</span>
-          </button>
-          <button type="button" class="nav-mobile__link" data-scroll="#awards">
-            <span class="nav-mobile__link-text">Awards</span>
-            <span class="nav-mobile__chev" aria-hidden="true">→</span>
-          </button>
-          <button type="button" class="nav-mobile__link">
-            <span class="nav-mobile__link-text">Log in</span>
-            <span class="nav-mobile__chev" aria-hidden="true">→</span>
-          </button>
-        </nav>
-        <div class="nav-mobile__bottom">
-          <button type="button" class="btn btn--black btn--lg nav-mobile__cta">Join for free</button>
-          <p class="nav-mobile__hint">Free to start · No card required</p>
-        </div>
-      </div>
-    </div>
-
-    <main id="top">
-      <section class="hero-mobbin reveal" data-reveal>
-        <div class="hero-mobbin__icon" aria-hidden="true">
-          <div class="hero-mobbin__icon-face">
-            <span class="hero-mobbin__layer hero-mobbin__layer--1"><span class="hero-mobbin__dots"></span></span>
-            <span class="hero-mobbin__layer hero-mobbin__layer--2"></span>
-            <span class="hero-mobbin__layer hero-mobbin__layer--3"></span>
+      <main class="binrobi-main">
+        <section class="binrobi-hero" aria-labelledby="binrobi-heading">
+          <div class="binrobi-hero__visual">
+            <img
+              class="binrobi-hero__img"
+              src="assets/images/binrobi-hero.png"
+              alt="Человек держит смартфон Binrobi"
+              decoding="async"
+              fetchpriority="high"
+            />
           </div>
-        </div>
-        <h1 class="hero-mobbin__title">Discover real-world design inspiration.</h1>
-        <p class="hero-mobbin__sub">
-          Featuring over 1,000 iOS &amp; Web apps, and 200 sites — New content weekly.
-        </p>
-        <div class="hero-mobbin__cta">
-          <button type="button" class="btn btn--black btn--lg">Join for free</button>
-          <button type="button" class="btn btn--outline btn--lg">See our plans <span aria-hidden="true">→</span></button>
-        </div>
-
-        <p class="trusted-label">Trusted by design teams at</p>
-        <div class="logo-cloud" aria-hidden="true">
-          <span>Uber</span><span>Headspace</span><span>Meta</span><span>Airbnb</span><span>Revolut</span><span>Metalab</span><span>Pinterest</span>
-        </div>
-      </section>
-
-      <section class="shell-section reveal" data-reveal id="preview">
-        <div class="app-shell">
-          <div class="app-shell__chrome">
-            <div class="app-shell__left">
-              <span class="brand__mark brand__mark--sm" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 4h4l4 8 4-8h4v16h-3.5V9.5L14.5 20h-1L9 11.5 6 16V4z" fill="currentColor" />
-                </svg>
-              </span>
-              <div class="tabs-mini" role="tablist">
-                <button type="button" class="tabs-mini__btn is-active" role="tab" aria-selected="true">Apps</button>
-                <button type="button" class="tabs-mini__btn" role="tab" aria-selected="false">Sites</button>
-              </div>
-            </div>
-            <div class="search-pill">
-              <span class="icon icon--search" aria-hidden="true"></span>
-              <span class="search-pill__placeholder">Search on iOS…</span>
-              <span class="icon icon--scan" aria-hidden="true"></span>
-            </div>
-            <div class="app-shell__right">
-              <button type="button" class="icon-btn icon-btn--plain" aria-label="Bookmarks"><span class="icon icon--bookmark" aria-hidden="true"></span></button>
-              <button type="button" class="icon-btn icon-btn--plain" aria-label="Language"><span class="icon icon--globe" aria-hidden="true"></span></button>
-              <button type="button" class="btn btn--outline btn--sm">Invite &amp; earn</button>
-              <span class="avatar" aria-hidden="true"></span>
-            </div>
-          </div>
-
-          <div class="mega-grid">
-            <div class="mega-col">
-              <h3 class="mega-col__h">Categories</h3>
-              <ul class="mega-col__list">
-                <li>Finance</li>
-                <li>Food &amp; Drink</li>
-                <li>Travel</li>
-                <li>Shopping</li>
-                <li>Social</li>
-              </ul>
-            </div>
-            <div class="mega-col">
-              <h3 class="mega-col__h">Screens</h3>
-              <ul class="mega-col__list">
-                <li>Login</li>
-                <li>Home</li>
-                <li>Search</li>
-                <li>Checkout</li>
-                <li>Filter &amp; Sort</li>
-              </ul>
-            </div>
-            <div class="mega-col">
-              <h3 class="mega-col__h">UI Elements</h3>
-              <ul class="mega-col__list">
-                <li>Card</li>
-                <li>Button</li>
-                <li>Toast</li>
-                <li>Banner</li>
-                <li>Tab bar</li>
-              </ul>
-            </div>
-            <div class="mega-col">
-              <h3 class="mega-col__h">Flows</h3>
-              <ul class="mega-col__list">
-                <li>Onboarding</li>
-                <li>Transferring money</li>
-                <li>Editing profile</li>
-                <li>Logging in</li>
-                <li>Subscribing &amp; Upgrading</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="filter-bar">
-            <div class="platform-toggle" role="group" aria-label="Platform">
-              <button type="button" class="platform-toggle__btn is-active">iOS</button>
-              <button type="button" class="platform-toggle__btn">Web</button>
-            </div>
-            <div class="sort-tabs">
-              <button type="button" class="sort-tabs__item is-active">Latest</button>
-              <button type="button" class="sort-tabs__item">Most popular</button>
-              <button type="button" class="sort-tabs__item">Top rated</button>
-            </div>
-            <button type="button" class="btn btn--ghost btn--sm"><span class="icon icon--filter" aria-hidden="true"></span> Filter</button>
-          </div>
-
-          <div class="phone-strip" aria-label="App previews">
-            <article class="phone-card">
-              <span class="phone-card__tag">New</span>
-              <div class="phone-card__screen phone-card__screen--dark">
-                <span class="phone-card__loader"></span>
-                <span>The Future Awaits</span>
-              </div>
-            </article>
-            <article class="phone-card">
-              <span class="phone-card__tag">Updated</span>
-              <div class="phone-card__screen phone-card__screen--light">
-                <span class="phone-card__mini-title">Home</span>
-                <div class="phone-card__feed"></div>
-              </div>
-            </article>
-            <article class="phone-card">
-              <div class="phone-card__screen phone-card__screen--breathe">
-                <span>Breathe in</span>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="stats-orbit reveal" data-reveal id="stats" data-stats-root>
-        <div class="stats-orbit__track">
-          <div class="stats-orbit__sticky">
-            <div class="orbit-icons orbit-icons--layer" aria-hidden="true" data-orbit-icons>
-              <span class="squircle squircle--a"></span>
-              <span class="squircle squircle--b"></span>
-              <span class="squircle squircle--c"></span>
-              <span class="squircle squircle--d"></span>
-              <span class="squircle squircle--e"></span>
-              <span class="squircle squircle--f"></span>
-              <span class="squircle squircle--g"></span>
-              <span class="squircle squircle--h"></span>
-            </div>
-            <p class="stats-orbit__kicker" data-stat-kicker="">A growing library of</p>
-            <div class="stats-orbit__nums">
-              <div class="stat-line" data-stat-line data-counter="1150" data-counter-scroll>
-                <span class="stat-line__eyebrow">Apps</span>
-                <div class="stat-line__row"><span class="stat-line__val">0</span> <span class="stat-line__unit">apps</span></div>
-              </div>
-              <div class="stat-line stat-line--muted" data-stat-line data-counter="609600" data-counter-scroll>
-                <span class="stat-line__eyebrow">Screens</span>
-                <div class="stat-line__row"><span class="stat-line__val">0</span> <span class="stat-line__unit">screens</span></div>
-              </div>
-              <div class="stat-line stat-line--muted stat-line--flows" data-stat-line data-counter="325600" data-counter-scroll>
-                <span class="stat-line__eyebrow">Flows</span>
-                <div class="stat-line__row"><span class="stat-line__val">0</span> <span class="stat-line__unit">flows</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="patterns-block reveal" data-reveal id="patterns">
-        <h2 class="patterns-block__title">Find design patterns in seconds.</h2>
-        <div class="pattern-tabs" role="tablist">
-          <button type="button" class="pattern-tabs__btn is-active" role="tab" aria-selected="true">Screens</button>
-          <button type="button" class="pattern-tabs__btn" role="tab" aria-selected="false">UI Elements</button>
-          <button type="button" class="pattern-tabs__btn" role="tab" aria-selected="false">Flows</button>
-          <button type="button" class="pattern-tabs__btn" role="tab" aria-selected="false">Text in Screenshot</button>
-        </div>
-        <div class="screens-row" aria-label="Screen categories">
-          <div class="screens-row__item"><span>Wallet</span></div>
-          <div class="screens-row__item"><span>Welcome</span></div>
-          <div class="screens-row__item"><span>Account Setup</span></div>
-          <div class="screens-row__item"><span>Home</span></div>
-          <div class="screens-row__item"><span>Subscription &amp; Paywall</span></div>
-          <div class="screens-row__item"><span>Login</span></div>
-        </div>
-        <div class="screens-mockups">
-          <div class="mock-phone"></div>
-          <div class="mock-phone mock-phone--accent"></div>
-          <div class="mock-phone mock-phone--wide"></div>
-          <div class="mock-phone"></div>
-          <div class="mock-phone"></div>
-          <div class="mock-phone mock-phone--last"></div>
-        </div>
-      </section>
-
-      <section class="flows-split reveal" data-reveal id="flows">
-        <h2 class="flows-split__title">Explore entire user journeys with flows.</h2>
-        <div class="flows-split__grid">
-          <article class="flow-card">
-            <div class="flow-card__visual flow-card__visual--video"></div>
-            <h3 class="flow-card__h">Videos</h3>
-            <p class="flow-card__p">
-              Experience flows the way they were meant to be experienced, complete with transitions, micro-interactions,
-              and animations.
+          <div class="binrobi-hero__content">
+            <h1 class="binrobi-hero__title" id="binrobi-heading">Binrobi</h1>
+            <p class="binrobi-hero__slogan">
+              смартфон, за который<br />
+              не надо платить
             </p>
-          </article>
-          <article class="flow-card">
-            <div class="flow-card__visual flow-card__visual--proto">
-              <button type="button" class="flow-card__hot" id="openPrototype" aria-label="Open prototype walkthrough"></button>
-            </div>
-            <h3 class="flow-card__h">Prototype mode</h3>
-            <p class="flow-card__p">
-              Walk through flows, step by step, by using the interactive hotspots at your own preferred pace.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section class="create-block reveal" data-reveal id="create">
-        <h2 class="create-block__title">From inspiration to creation.</h2>
-        <div class="create-grid">
-          <article class="create-card">
-            <span class="icon icon--copy" aria-hidden="true"></span>
-            <h3>Copy to Figma</h3>
-            <p>Download designs or copy into your tool of choice.</p>
-          </article>
-          <article class="create-card">
-            <span class="icon icon--bookmark" aria-hidden="true"></span>
-            <h3>Save to collections</h3>
-            <p>Collect favorites in one place.</p>
-          </article>
-          <article class="create-card">
-            <span class="icon icon--comment" aria-hidden="true"></span>
-            <h3>Leave comments</h3>
-            <p>Capture context for future you.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="quotes-wrap reveal" data-reveal id="testimonials">
-        <h2 class="quotes-wrap__title">What our users are saying.</h2>
-        <div class="slider" data-slider>
-          <div class="slider__viewport">
-            <div class="slider__track" data-slider-track>
-              <article class="quote-slide" data-quote>
-                <p class="quote-slide__text">“Mobbin is a great resource to see what best practices look like for mobile patterns.”</p>
-                <p class="quote-slide__who">— Design lead</p>
-              </article>
-              <article class="quote-slide" data-quote>
-                <p class="quote-slide__text">“The advanced filtering and flows save hours of screenshot archaeology.”</p>
-                <p class="quote-slide__who">— Product designer</p>
-              </article>
-              <article class="quote-slide" data-quote>
-                <p class="quote-slide__text">“Indispensable for understanding real-world UI and copy in context.”</p>
-                <p class="quote-slide__who">— UX researcher</p>
-              </article>
+            <div class="binrobi-hero__links">
+              <a href="#">Забронировать</a>
+              <a href="#">О смартфоне</a>
             </div>
           </div>
-          <div class="slider__nav">
-            <button type="button" data-slider-prev aria-label="Previous"><span class="icon icon--chev-left" aria-hidden="true"></span></button>
-            <div class="slider__dots" data-slider-dots></div>
-            <button type="button" data-slider-next aria-label="Next"><span class="icon icon--chev-right" aria-hidden="true"></span></button>
-          </div>
-        </div>
-      </section>
-
-      <section class="cta-bottom reveal" data-reveal id="pricing">
-        <h2 class="cta-bottom__title">Never run out of inspiration again.</h2>
-        <p class="cta-bottom__sub">Use for free as long as you like — or upgrade for full access.</p>
-        <div class="hero-mobbin__cta">
-          <button type="button" class="btn btn--black btn--lg">Join for free</button>
-          <button type="button" class="btn btn--outline btn--lg">See our plans</button>
-        </div>
-      </section>
-
-      <footer class="site-footer" id="awards">
-        <div class="site-footer__row">
-          <div class="brand brand--footer">
-            <span class="brand__mark" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 4h4l4 8 4-8h4v16h-3.5V9.5L14.5 20h-1L9 11.5 6 16V4z" fill="currentColor" />
-              </svg>
-            </span>
-            <span>Mobbin</span>
-          </div>
-          <p class="site-footer__muted">Design better digital experiences. Demo layout — no external links.</p>
-        </div>
-      </footer>
-    </main>
-
-    <button type="button" class="fab-top" id="fabTop" aria-label="Back to top">↑</button>
-
-    <div class="modal" id="prototypeModal" hidden role="dialog" aria-modal="true" aria-label="Prototype">
-      <div class="modal__backdrop" data-modal-close></div>
-      <div class="modal__card">
-        <button type="button" class="modal__x" data-modal-close="true" aria-label="Close">×</button>
-        <h3 class="modal__title" id="modalTitle">Welcome</h3>
-        <p class="modal__body" id="modalBody">Step 1 of the flow.</p>
-        <div class="modal__steps">
-          <div class="modalStep modalStep--active" data-modal-step="0">Welcome</div>
-          <div class="modalStep" data-modal-step="1">Account Setup</div>
-          <div class="modalStep" data-modal-step="2">Subscription</div>
-          <div class="modalStep" data-modal-step="3">Checkout</div>
-        </div>
-        <div class="modal__actions">
-          <button type="button" class="btn btn--outline" data-modal-prev>Previous</button>
-          <button type="button" class="btn btn--black" data-modal-next>Next</button>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
-
-    <script src="assets/app.js" defer></script>
   </body>
 </html>
