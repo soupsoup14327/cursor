@@ -1,0 +1,39 @@
+{
+  "name": "anime-arena",
+  "version": "1.0.0",
+  "description": "Anime Arena — мини-игра",
+  "main": "electron-main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.animearena.game",
+    "productName": "Anime Arena",
+    "files": [
+      "index.html",
+      "script.js",
+      "style.css",
+      "assets/**/*",
+      "electron-main.js"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
+  }
+}
