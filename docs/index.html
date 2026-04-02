@@ -41,7 +41,9 @@
       <section class="hero-mobbin reveal" data-reveal>
         <div class="hero-mobbin__icon" aria-hidden="true">
           <div class="hero-mobbin__icon-face">
-            <span class="hero-mobbin__dots"></span>
+            <span class="hero-mobbin__layer hero-mobbin__layer--1"><span class="hero-mobbin__dots"></span></span>
+            <span class="hero-mobbin__layer hero-mobbin__layer--2"></span>
+            <span class="hero-mobbin__layer hero-mobbin__layer--3"></span>
           </div>
         </div>
         <h1 class="hero-mobbin__title">Discover real-world design inspiration.</h1>
@@ -166,22 +168,35 @@
         </div>
       </section>
 
-      <section class="stats-orbit reveal" data-reveal id="stats">
-        <p class="stats-orbit__kicker">A growing library of</p>
-        <div class="stats-orbit__nums">
-          <div class="stat-line" data-counter="1150"><span class="stat-line__val">0</span> <span class="stat-line__unit">apps</span></div>
-          <div class="stat-line" data-counter="609600"><span class="stat-line__val">0</span> <span class="stat-line__unit">screens</span></div>
-          <div class="stat-line stat-line--muted" data-counter="325600"><span class="stat-line__val">0</span> <span class="stat-line__unit">flows</span></div>
-        </div>
-        <div class="orbit-icons" aria-hidden="true">
-          <span class="squircle squircle--a"></span>
-          <span class="squircle squircle--b"></span>
-          <span class="squircle squircle--c"></span>
-          <span class="squircle squircle--d"></span>
-          <span class="squircle squircle--e"></span>
-          <span class="squircle squircle--f"></span>
-          <span class="squircle squircle--g"></span>
-          <span class="squircle squircle--h"></span>
+      <section class="stats-orbit reveal" data-reveal id="stats" data-stats-root>
+        <div class="stats-orbit__track">
+          <div class="stats-orbit__sticky">
+            <div class="orbit-icons orbit-icons--layer" aria-hidden="true" data-orbit-icons>
+              <span class="squircle squircle--a"></span>
+              <span class="squircle squircle--b"></span>
+              <span class="squircle squircle--c"></span>
+              <span class="squircle squircle--d"></span>
+              <span class="squircle squircle--e"></span>
+              <span class="squircle squircle--f"></span>
+              <span class="squircle squircle--g"></span>
+              <span class="squircle squircle--h"></span>
+            </div>
+            <p class="stats-orbit__kicker" data-stat-kicker="">A growing library of</p>
+            <div class="stats-orbit__nums">
+              <div class="stat-line" data-stat-line data-counter="1150" data-counter-scroll>
+                <span class="stat-line__eyebrow">Apps</span>
+                <div class="stat-line__row"><span class="stat-line__val">0</span> <span class="stat-line__unit">apps</span></div>
+              </div>
+              <div class="stat-line stat-line--muted" data-stat-line data-counter="609600" data-counter-scroll>
+                <span class="stat-line__eyebrow">Screens</span>
+                <div class="stat-line__row"><span class="stat-line__val">0</span> <span class="stat-line__unit">screens</span></div>
+              </div>
+              <div class="stat-line stat-line--muted stat-line--flows" data-stat-line data-counter="325600" data-counter-scroll>
+                <span class="stat-line__eyebrow">Flows</span>
+                <div class="stat-line__row"><span class="stat-line__val">0</span> <span class="stat-line__unit">flows</span></div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -55,7 +55,7 @@
   }
 
   function setupCounters() {
-    const stats = Array.from(document.querySelectorAll("[data-counter]"));
+    const stats = Array.from(document.querySelectorAll("[data-counter]:not([data-counter-scroll])"));
     if (stats.length === 0) return;
 
     const findValueEl = (el) => el.querySelector(".stat-line__val") || el.querySelector(".stat__value");
@@ -102,6 +102,77 @@
     );
 
     stats.forEach((s) => io.observe(s));
+  }
+
+  function setupStatsScroll() {
+    const root = document.getElementById("stats");
+    if (!root) return;
+
+    const lines = Array.from(root.querySelectorAll("[data-stat-line]"));
+
+    const runCounterOnce = (line) => {
+      if (line.dataset.counted === "1") return;
+      line.dataset.counted = "1";
+      const target = Number(line.dataset.counter || 0);
+      const valueEl = line.querySelector(".stat-line__val");
+      if (!valueEl) return;
+
+      if (prefersReducedMotion) {
+        valueEl.textContent = formatInt(target);
+        return;
+      }
+
+      const start = performance.now();
+      const duration = 1100;
+
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        valueEl.textContent = formatInt(Math.round(target * eased));
+        if (t < 1) requestAnimationFrame(step);
+      };
+
+      requestAnimationFrame(step);
+    };
+
+    if (prefersReducedMotion) {
+      root.classList.add("stats-orbit--kicker-in", "stats-orbit--complete");
+      lines.forEach((line) => {
+        line.classList.add("is-visible");
+        runCounterOnce(line);
+      });
+      return;
+    }
+
+    const onScroll = () => {
+      const vh = window.innerHeight;
+      const h = root.offsetHeight;
+      const start = root.offsetTop - vh * 0.88;
+      const end = root.offsetTop + h - vh * 0.32;
+      const y = window.scrollY;
+      let p = (y - start) / (end - start);
+      p = Math.max(0, Math.min(1, p));
+      root.style.setProperty("--stats-progress", p.toFixed(4));
+
+      if (p > 0.04) root.classList.add("stats-orbit--kicker-in");
+      else root.classList.remove("stats-orbit--kicker-in");
+
+      const thresholds = [0.1, 0.38, 0.64];
+      lines.forEach((line, i) => {
+        const threshold = thresholds[i] ?? 0.9;
+        if (p >= threshold) {
+          line.classList.add("is-visible");
+          runCounterOnce(line);
+        }
+      });
+
+      if (p >= 0.94) root.classList.add("stats-orbit--complete");
+      else root.classList.remove("stats-orbit--complete");
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    onScroll();
   }
 
   function setupSmoothScroll() {
@@ -282,6 +353,7 @@
   setupAnnouncement();
   setupFab();
   setupCounters();
+  setupStatsScroll();
   setupSmoothScroll();
   setupPrototypeModal();
   setupSlider();
