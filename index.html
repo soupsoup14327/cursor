@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Anime Arena - Мини-игра</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="bg-glow bg-glow--left"></div>
+    <div class="bg-glow bg-glow--right"></div>
+    <main class="layout">
+      <header class="panel header">
+        <h1>Anime Arena</h1>
+        <p>Выбери героя и победи босса в пошаговом дуэле.</p>
+      </header>
+
+      <section id="hero-picker" class="panel">
+        <h2>Выбор персонажа</h2>
+        <div id="hero-grid" class="hero-grid"></div>
+      </section>
+
+      <section id="battle" class="panel hidden">
+        <div class="fighters">
+          <article class="card" id="player-card">
+            <h3 id="player-name">Герой</h3>
+            <img id="player-avatar" alt="Аватар игрока" />
+            <div class="hp-wrap">
+              <div id="player-hp-bar" class="hp-bar"></div>
+            </div>
+            <p id="player-hp-text" class="hp-text">HP: 0/0</p>
+            <p id="player-status" class="status">Готов к бою</p>
+          </article>
+
+          <div class="versus">VS</div>
+
+          <article class="card enemy" id="enemy-card">
+            <h3 id="enemy-name">Босс</h3>
+            <img id="enemy-avatar" alt="Аватар соперника" />
+            <div class="hp-wrap">
+              <div id="enemy-hp-bar" class="hp-bar enemy"></div>
+            </div>
+            <p id="enemy-hp-text" class="hp-text">HP: 0/0</p>
+            <p id="enemy-status" class="status">...</p>
+          </article>
+        </div>
+
+        <section class="controls">
+          <button class="action-btn" data-action="attack">Обычная атака</button>
+          <button class="action-btn" data-action="skill">Скилл (x1.8)</button>
+          <button class="action-btn" data-action="guard">Блок (снижает урон)</button>
+          <button id="restart-btn" class="action-btn restart hidden">Новый бой</button>
+        </section>
+
+        <section class="hud">
+          <p><strong>Раунд:</strong> <span id="round">1</span></p>
+          <p><strong>Комбо:</strong> <span id="combo">0</span></p>
+          <p><strong>Победы:</strong> <span id="wins">0</span></p>
+        </section>
+
+        <section class="log-wrap">
+          <h4>Лог боя</h4>
+          <ul id="battle-log"></ul>
+        </section>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
