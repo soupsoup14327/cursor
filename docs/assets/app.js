@@ -24,28 +24,33 @@
           }
         }
       },
-      { threshold: 0.16 }
+      { threshold: 0.12 }
     );
 
     els.forEach((el) => io.observe(el));
   }
 
-  function setupThemeToggle() {
-    const btn = document.getElementById("themeToggle");
-    if (!btn) return;
+  function setupAnnouncement() {
+    const bar = document.getElementById("announcement");
+    const btn = document.getElementById("announcementClose");
+    if (!bar || !btn) return;
+    btn.addEventListener("click", () => bar.classList.add("is-hidden"));
+  }
 
-    const root = document.documentElement;
-    const stored = localStorage.getItem("theme");
-    const systemDark =
-      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  function setupFab() {
+    const fab = document.getElementById("fabTop");
+    if (!fab) return;
 
-    const theme = stored || (systemDark ? "dark" : "light");
-    root.dataset.theme = theme;
+    const toggle = () => {
+      if (window.scrollY > 400) fab.classList.add("is-visible");
+      else fab.classList.remove("is-visible");
+    };
 
-    btn.addEventListener("click", () => {
-      const next = root.dataset.theme === "dark" ? "light" : "dark";
-      root.dataset.theme = next;
-      localStorage.setItem("theme", next);
+    window.addEventListener("scroll", toggle, { passive: true });
+    toggle();
+
+    fab.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
     });
   }
 
@@ -53,9 +58,11 @@
     const stats = Array.from(document.querySelectorAll("[data-counter]"));
     if (stats.length === 0) return;
 
+    const findValueEl = (el) => el.querySelector(".stat-line__val") || el.querySelector(".stat__value");
+
     const runFor = (el) => {
       const target = Number(el.dataset.counter || 0);
-      const valueEl = el.querySelector(".stat__value");
+      const valueEl = findValueEl(el);
       if (!valueEl) return;
 
       if (prefersReducedMotion) {
@@ -64,7 +71,7 @@
       }
 
       const start = performance.now();
-      const duration = 900;
+      const duration = 1000;
 
       const step = (now) => {
         const t = Math.min(1, (now - start) / duration);
@@ -91,7 +98,7 @@
           }
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.25 }
     );
 
     stats.forEach((s) => io.observe(s));
@@ -127,10 +134,10 @@
     const closeEls = Array.from(modal.querySelectorAll("[data-modal-close]"));
 
     const steps = [
-      { title: "Welcome", body: "Landing step showing the main entry point and the “first impression” rhythm." },
-      { title: "Account Setup", body: "Step with a structured flow: short copy + clear grouping and spacing." },
-      { title: "Subscription", body: "Paywall context and transitions represented as a reusable step model." },
-      { title: "Checkout", body: "Final step: confirmation, ordering summary, and clear next actions." },
+      { title: "Welcome", body: "Landing step: first impression, hierarchy, and spacing." },
+      { title: "Account Setup", body: "Structured questions and clear grouping." },
+      { title: "Subscription", body: "Paywall patterns and plan comparison." },
+      { title: "Checkout", body: "Confirmation, summary, and next actions." },
     ];
 
     let index = 0;
@@ -147,7 +154,6 @@
         n.classList.toggle("modalStep--active", nodeIdx === index);
       });
 
-      // Sync the page flow panel selection (hotspot model + step buttons)
       if (flowMock) flowMock.setAttribute("data-step", String(index));
       pageStepBtns.forEach((b) => {
         const btnIdx = Number(b.getAttribute("data-step") || 0);
@@ -167,14 +173,11 @@
       document.body.style.overflow = "";
     };
 
-    const openPrototype = document.getElementById("openPrototype");
-    if (openPrototype) openPrototype.addEventListener("click", () => open(0));
+    document.getElementById("openPrototype")?.addEventListener("click", () => open(0));
 
-    const hotspots = Array.from(document.querySelectorAll("[data-hotspot]"));
-    hotspots.forEach((h) => {
+    Array.from(document.querySelectorAll("[data-hotspot]")).forEach((h) => {
       h.addEventListener("click", () => {
         const idx = Number(h.getAttribute("data-hotspot") || 0);
-        // Map main hotspots to modal steps (we keep a compact 0..2 set).
         open(idx);
       });
     });
@@ -191,7 +194,8 @@
 
     closeEls.forEach((el) => el.addEventListener("click", close));
     modal.addEventListener("click", (e) => {
-      if (e.target && e.target.getAttribute && e.target.getAttribute("data-modal-close") !== null) close();
+      const t = e.target;
+      if (t && t.getAttribute && t.getAttribute("data-modal-close") !== null) close();
     });
 
     document.addEventListener("keydown", (e) => {
@@ -219,7 +223,6 @@
     let index = 0;
     const slideCount = slides.length;
 
-    // Ensure slides are exactly one viewport wide.
     slides.forEach((s) => {
       s.style.flex = "0 0 100%";
     });
@@ -230,8 +233,7 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "dot";
-      btn.setAttribute("aria-label", `Go to slide ${i + 1}`);
-      btn.dataset.dot = String(i);
+      btn.setAttribute("aria-label", `Slide ${i + 1}`);
       btn.addEventListener("click", () => go(i));
       dotsWrap.appendChild(btn);
       dots.push(btn);
@@ -246,14 +248,6 @@
     prevBtn?.addEventListener("click", () => go(index - 1));
     nextBtn?.addEventListener("click", () => go(index + 1));
 
-    slider.addEventListener("mouseenter", () => {
-      if (autoTimer) clearInterval(autoTimer);
-    });
-
-    slider.addEventListener("mouseleave", () => {
-      setupAuto();
-    });
-
     let autoTimer = null;
     const setupAuto = () => {
       if (prefersReducedMotion) return;
@@ -261,22 +255,35 @@
       autoTimer = window.setInterval(() => go(index + 1), 6500);
     };
 
-    document.addEventListener("keydown", (e) => {
-      if (document.activeElement && slider.contains(document.activeElement)) {
-        if (e.key === "ArrowLeft") go(index - 1);
-        if (e.key === "ArrowRight") go(index + 1);
-      }
+    slider.addEventListener("mouseenter", () => {
+      if (autoTimer) clearInterval(autoTimer);
     });
+    slider.addEventListener("mouseleave", () => setupAuto());
 
     go(0);
     setupAuto();
   }
 
+  function setupPatternTabs() {
+    const wrap = document.querySelector(".pattern-tabs");
+    if (!wrap) return;
+    const btns = Array.from(wrap.querySelectorAll(".pattern-tabs__btn"));
+    btns.forEach((b) => {
+      b.addEventListener("click", () => {
+        btns.forEach((x) => {
+          x.classList.toggle("is-active", x === b);
+          x.setAttribute("aria-selected", x === b ? "true" : "false");
+        });
+      });
+    });
+  }
+
   setupReveal();
-  setupThemeToggle();
+  setupAnnouncement();
+  setupFab();
   setupCounters();
   setupSmoothScroll();
   setupPrototypeModal();
   setupSlider();
+  setupPatternTabs();
 })();
-
