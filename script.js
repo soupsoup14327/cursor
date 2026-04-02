@@ -1,3 +1,6 @@
+/** Аватары: PNG с Pixabay (лицензия Pixabay, бесплатное использование). */
+const AV = "./assets/avatars";
+
 const heroes = [
   {
     id: "akari",
@@ -5,12 +8,7 @@ const heroes = [
     maxHp: 110,
     attack: 19,
     crit: 0.22,
-    avatar: makeAvatar({
-      hair: "#ef58bf",
-      eyes: "#44e6ff",
-      accent: "#ffe160",
-      bg: "#1d1d3f",
-    }),
+    avatar: `${AV}/akari.png`,
   },
   {
     id: "ren",
@@ -18,12 +16,7 @@ const heroes = [
     maxHp: 135,
     attack: 15,
     crit: 0.12,
-    avatar: makeAvatar({
-      hair: "#4b74ff",
-      eyes: "#89efff",
-      accent: "#9a75ff",
-      bg: "#17173a",
-    }),
+    avatar: `${AV}/ren.png`,
   },
   {
     id: "yuna",
@@ -31,12 +24,7 @@ const heroes = [
     maxHp: 95,
     attack: 24,
     crit: 0.3,
-    avatar: makeAvatar({
-      hair: "#ff6f74",
-      eyes: "#ffe58d",
-      accent: "#6fefb3",
-      bg: "#28162e",
-    }),
+    avatar: `${AV}/yuna.png`,
   },
 ];
 
@@ -45,12 +33,7 @@ const bossTemplate = {
   maxHp: 150,
   attack: 17,
   crit: 0.2,
-  avatar: makeAvatar({
-    hair: "#d5487a",
-    eyes: "#ffb8ce",
-    accent: "#6f59ff",
-    bg: "#2d1127",
-  }),
+  avatar: `${AV}/boss.png`,
 };
 
 const state = {
@@ -282,26 +265,4 @@ function appendLog(message) {
 
 function resetLog() {
   el.battleLog.innerHTML = "";
-}
-
-function makeAvatar({ hair, eyes, accent, bg }) {
-  const svg = `
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'>
-      <defs>
-        <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
-          <stop offset='0%' stop-color='${bg}' />
-          <stop offset='100%' stop-color='#0f0f1f' />
-        </linearGradient>
-      </defs>
-      <rect width='200' height='200' rx='18' fill='url(#g)' />
-      <circle cx='100' cy='114' r='55' fill='#f8d8c6' />
-      <path d='M42 102 C48 52, 154 44, 158 104 C154 72, 126 60, 102 64 C78 68, 50 80, 42 102Z' fill='${hair}' />
-      <circle cx='82' cy='113' r='6' fill='${eyes}' />
-      <circle cx='118' cy='113' r='6' fill='${eyes}' />
-      <path d='M84 138 C94 148, 108 148, 118 138' stroke='#8e4f56' stroke-width='4' fill='none' stroke-linecap='round'/>
-      <path d='M66 67 L134 67 L124 50 L76 50 Z' fill='${accent}' opacity='0.85'/>
-      <circle cx='154' cy='38' r='12' fill='${accent}' opacity='0.95'/>
-    </svg>
-  `;
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
