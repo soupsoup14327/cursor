@@ -114,7 +114,6 @@ h4 {
   border: 1px solid #44447c;
 }
 
-/* Inner wrapper in script.js: img + div > .hero-name + .hero-stats */
 .hero-btn > div {
   width: 100%;
   text-align: center;
