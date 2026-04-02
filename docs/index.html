@@ -33,13 +33,13 @@
           <button type="button" class="nav-links__item" data-scroll="#awards">Awards</button>
           <button type="button" class="nav-links__item">Log in</button>
         </nav>
-        <button type="button" class="btn btn--black nav-cta--desktop">Join for free</button>
+        <button type="button" class="btn btn--black nav-pill__join">Join for free</button>
         <button
           type="button"
           class="nav-burger"
           id="navBurger"
           aria-expanded="false"
-          aria-controls="navMobilePanel"
+          aria-controls="navMobileSheet"
           aria-label="Open menu"
         >
           <span class="nav-burger__bar" aria-hidden="true"></span>
@@ -50,25 +50,47 @@
     </div>
 
     <div class="nav-mobile" id="navMobile" aria-hidden="true">
-      <div class="nav-mobile__backdrop" data-nav-close tabindex="-1"></div>
       <div
-        class="nav-mobile__panel"
-        id="navMobilePanel"
+        class="nav-mobile__sheet"
+        id="navMobileSheet"
         role="dialog"
         aria-modal="true"
         aria-label="Site menu"
         tabindex="-1"
       >
-        <div class="nav-mobile__head">
-          <span class="nav-mobile__title">Menu</span>
-          <button type="button" class="nav-mobile__close" data-nav-close aria-label="Close menu">×</button>
+        <div class="nav-mobile__top">
+          <a class="nav-mobile__brand" href="#top" data-nav-close>
+            <span class="brand__mark" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 4h4l4 8 4-8h4v16h-3.5V9.5L14.5 20h-1L9 11.5 6 16V4z" fill="currentColor" />
+              </svg>
+            </span>
+            <span>Mobbin</span>
+          </a>
+          <button type="button" class="nav-mobile__close" data-nav-close aria-label="Close menu">
+            <span class="nav-mobile__close-line" aria-hidden="true"></span>
+            <span class="nav-mobile__close-line" aria-hidden="true"></span>
+          </button>
         </div>
+        <p class="nav-mobile__lede">Design inspiration for mobile &amp; web</p>
         <nav class="nav-mobile__links" aria-label="Mobile">
-          <button type="button" class="nav-mobile__link" data-scroll="#pricing">Pricing</button>
-          <button type="button" class="nav-mobile__link" data-scroll="#awards">Awards</button>
-          <button type="button" class="nav-mobile__link">Log in</button>
+          <button type="button" class="nav-mobile__link" data-scroll="#pricing">
+            <span class="nav-mobile__link-text">Pricing</span>
+            <span class="nav-mobile__chev" aria-hidden="true">→</span>
+          </button>
+          <button type="button" class="nav-mobile__link" data-scroll="#awards">
+            <span class="nav-mobile__link-text">Awards</span>
+            <span class="nav-mobile__chev" aria-hidden="true">→</span>
+          </button>
+          <button type="button" class="nav-mobile__link">
+            <span class="nav-mobile__link-text">Log in</span>
+            <span class="nav-mobile__chev" aria-hidden="true">→</span>
+          </button>
         </nav>
-        <button type="button" class="btn btn--black nav-mobile__cta">Join for free</button>
+        <div class="nav-mobile__bottom">
+          <button type="button" class="btn btn--black btn--lg nav-mobile__cta">Join for free</button>
+          <p class="nav-mobile__hint">Free to start · No card required</p>
+        </div>
       </div>
     </div>
 

@@ -40,7 +40,7 @@
   function setupMobileNav() {
     const root = document.getElementById("navMobile");
     const burger = document.getElementById("navBurger");
-    const panel = document.getElementById("navMobilePanel");
+    const panel = document.getElementById("navMobileSheet");
     if (!root || !burger) return;
 
     const closeEls = Array.from(root.querySelectorAll("[data-nav-close]"));
