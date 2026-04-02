@@ -9,10 +9,11 @@
         --bg: #ffffff;
         --text: #1c1c1e;
         --muted: #6e6e73;
-        --card-bg: #f2f2f7;
+        --card-bg: #f7f7f7;
         --card-border: #e5e5ea;
         --shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
         --radius: 14px;
+        --icon: #0a66ff;
       }
 
       * {
@@ -36,7 +37,10 @@
 
       header {
         padding-top: 6px;
-        padding-bottom: 18px;
+        padding-bottom: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
       }
 
       .kicker {
@@ -47,7 +51,7 @@
         font-size: 13px;
         color: var(--muted);
         background: #fafafa;
-        margin-bottom: 12px;
+        margin: 0;
       }
 
       h1 {
@@ -57,8 +61,14 @@
         line-height: 1.1;
       }
 
+      .title-block {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
       .subtitle {
-        margin: 12px 0 0;
+        margin: 0;
         color: var(--muted);
         font-size: 16.5px;
         max-width: 72ch;
@@ -97,10 +107,16 @@
         border-radius: 12px;
         display: grid;
         place-items: center;
-        background: #ffffff;
+        background: var(--card-bg);
         border: 1px solid var(--card-border);
-        font-size: 20px;
         flex: 0 0 auto;
+        color: var(--icon);
+      }
+
+      .icon svg {
+        width: 22px;
+        height: 22px;
+        display: block;
       }
 
       h2 {
@@ -110,70 +126,440 @@
         letter-spacing: -0.01em;
       }
 
+      .content {
+        margin-top: 8px; /* HIG-style vertical rhythm */
+      }
+
       .body {
-        margin: 10px 0 0; /* body */
+        margin: 6px 0 0; /* body */
         color: var(--muted);
         font-size: 14.8px;
       }
     </style>
+    <link rel="stylesheet" href="assets/styles/tokens.css" />
+    <link rel="stylesheet" href="assets/styles/site.css" />
   </head>
-  <body>
+  <body><!--
     <div class="container">
       <header>
         <div class="kicker">HIG-inspired</div>
-        <h1>Сайт с заголовком и четырьмя карточками</h1>
-        <p class="subtitle">
-          Белый фон, аккуратные отступы, мягкие серые карточки и понятная иерархия текста.
-          Всё сделано на одном HTML-файле.
-        </p>
+        <div class="title-block">
+          <h1>Сайт с заголовком и четырьмя карточками</h1>
+          <p class="subtitle">
+            Белый фон, аккуратные отступы, мягкие серые карточки и понятная иерархия текста.
+            Всё сделано на одном HTML-файле.
+          </p>
+        </div>
       </header>
 
       <main class="cards" aria-label="Карточки возможностей">
         <article class="card">
           <div class="card__top">
-            <div class="icon" aria-hidden="true">⚡</div>
-            <h2>Быстрый старт</h2>
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M13 2L3 14h8l-1 8 11-14h-8l1-6z"
+                />
+              </svg>
+            </div>
+            <div class="content">
+              <h2>Быстрый старт</h2>
+              <p class="body">
+                Простой макет: заголовок и четыре карточки в удобной сетке. Для пользователя — минимум действий,
+                для разработчика — предсказуемая структура.
+              </p>
+            </div>
           </div>
-          <p class="body">
-            Простой макет: заголовок и четыре карточки в удобной сетке. Для пользователя — минимум действий,
-            для разработчика — предсказуемая структура.
-          </p>
         </article>
 
         <article class="card">
           <div class="card__top">
-            <div class="icon" aria-hidden="true">🧩</div>
-            <h2>Модульность</h2>
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M7 3a2 2 0 0 0-2 2v2a2 2 0 1 0 0 4v2a2 2 0 0 0 2 2h2v-1a2 2 0 1 1 4 0v1h2a2 2 0 0 0 2-2v-2a2 2 0 1 1 0-4V5a2 2 0 0 0-2-2h-2v1a2 2 0 1 1-4 0V3H7z"
+                />
+              </svg>
+            </div>
+            <div class="content">
+              <h2>Модульность</h2>
+              <p class="body">
+                Каждая карточка состоит из “иконка → подзаголовок → текст”. Их легко менять местами или
+                дополнять без поломки визуального баланса.
+              </p>
+            </div>
           </div>
-          <p class="body">
-            Каждая карточка состоит из “иконка → подзаголовок → текст”. Их легко менять местами или
-            дополнять без поломки визуального баланса.
-          </p>
         </article>
 
         <article class="card">
           <div class="card__top">
-            <div class="icon" aria-hidden="true">🧭</div>
-            <h2>Четкая навигация</h2>
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+                <path
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 22a10 10 0 1 0-10-10 10 10 0 0 0 10 10Z"
+                />
+                <path
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M14.8 9.2 9.5 11.3l-2.1 5.3 5.3-2.1 2.1-5.3Z"
+                />
+              </svg>
+            </div>
+            <div class="content">
+              <h2>Четкая навигация</h2>
+              <p class="body">
+                Семантика (`header`, `main`, `article`) помогает поддерживать порядок в коде и улучшает доступность
+                для экранных читалок.
+              </p>
+            </div>
           </div>
-          <p class="body">
-            Семантика (`header`, `main`, `article`) помогает поддерживать порядок в коде и улучшает доступность
-            для экранных читалок.
-          </p>
         </article>
 
         <article class="card">
           <div class="card__top">
-            <div class="icon" aria-hidden="true">📱</div>
-            <h2>Адаптивность</h2>
+            <div class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+                <path
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"
+                />
+                <path
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 19h.01"
+                />
+              </svg>
+            </div>
+            <div class="content">
+              <h2>Адаптивность</h2>
+              <p class="body">
+                На мобильных карточки перестраиваются в один столбец — читать и скроллить комфортно,
+                а отступы остаются “воздушными”.
+              </p>
+            </div>
           </div>
-          <p class="body">
-            На мобильных карточки перестраиваются в один столбец — читать и скроллить комфортно,
-            а отступы остаются “воздушными”.
-          </p>
         </article>
       </main>
     </div>
-  </body>
+  -->
+
+    <div class="bg-orbs" aria-hidden="true">
+      <div class="orb orb--a"></div>
+      <div class="orb orb--b"></div>
+      <div class="orb orb--c"></div>
+    </div>
+
+    <header class="topbar reveal" data-reveal>
+      <div class="container topbar__row">
+        <div class="brand" aria-label="Mobbin (demo)">
+          <span class="brand__dot" aria-hidden="true"></span>
+          <span class="brand__name">Mobbin</span>
+        </div>
+
+        <nav class="nav" aria-label="Sections">
+          <button class="nav__item is-active" type="button" data-scroll="#patterns">Screens</button>
+          <button class="nav__item" type="button" data-scroll="#flows">Flows</button>
+          <button class="nav__item" type="button" data-scroll="#create">From inspiration</button>
+          <button class="nav__item" type="button" data-scroll="#testimonials">Stories</button>
+        </nav>
+
+        <div class="topbar__actions">
+          <button class="icon-btn" type="button" id="themeToggle" aria-label="Toggle theme">
+            <span class="icon icon--sun" aria-hidden="true"></span>
+            <span class="icon icon--moon" aria-hidden="true"></span>
+          </button>
+          <button class="btn btn-ghost" type="button">Pricing</button>
+          <button class="btn btn-primary" type="button">Join for free</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero__grid">
+          <div class="hero__copy reveal" data-reveal>
+            <div class="pill">
+              <span class="icon icon--spark" aria-hidden="true"></span>
+              Discover real-world design inspiration
+            </div>
+            <h1 class="hero__title">Design patterns in seconds. Flows you can actually feel.</h1>
+            <p class="hero__lead">
+              Local demo (no external links) with a token-driven layout and micro-effects.
+            </p>
+
+            <div class="hero__cta">
+              <button class="btn btn-primary" type="button">Join for free</button>
+              <button class="btn btn-secondary" type="button">See our plans</button>
+            </div>
+            <div class="badgeRow" aria-hidden="true">
+              <span class="badge">ChatGPT</span>
+              <span class="badge">Headspace</span>
+              <span class="badge">Nike</span>
+              <span class="badge">Dropbox</span>
+              <span class="badge">Airbnb</span>
+              <span class="badge">Uber</span>
+            </div>
+          </div>
+
+          <div class="hero__preview reveal" data-reveal>
+            <div class="previewCard" role="img" aria-label="UI preview mock">
+              <div class="previewCard__top">
+                <div class="previewCard__dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div class="previewCard__title">Prototype mode</div>
+              </div>
+
+              <div class="previewCard__content">
+                <div class="mockApp">
+                  <div class="mockScreen">
+                    <div class="mockRow mockRow--hero">Welcome</div>
+                    <div class="mockRow mockRow--chip">Account Setup</div>
+                    <div class="mockRow mockRow--card">Subscription & Paywall</div>
+                    <div class="mockRow mockRow--card">Checkout</div>
+                  </div>
+                  <div class="mockHotspots" aria-hidden="true">
+                    <span class="hotspotDot" style="--x: 30%; --y: 38%"></span>
+                    <span class="hotspotDot" style="--x: 63%; --y: 54%"></span>
+                    <span class="hotspotDot" style="--x: 45%; --y: 72%"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="previewCard__footer">
+                <button class="btn btn-small btn-ghost" type="button" id="openPrototype">
+                  <span class="icon icon--play" aria-hidden="true"></span>
+                  Walk through a flow
+                </button>
+              </div>
+            </div>
+
+            <div class="statsStrip" aria-label="Local stats mock">
+              <div class="stat" data-counter="1150">
+                <span class="stat__value">0</span>
+                <span class="stat__label">apps</span>
+              </div>
+              <div class="stat" data-counter="609600">
+                <span class="stat__value">0</span>
+                <span class="stat__label">screens</span>
+              </div>
+              <div class="stat" data-counter="325600">
+                <span class="stat__value">0</span>
+                <span class="stat__label">flows</span>
+              </div>
+              <div class="stat stat--small"><span class="stat__label">New content weekly</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="patterns" class="section">
+        <div class="container">
+          <div class="sectionHead reveal" data-reveal>
+            <h2 class="sectionHead__title">Find design patterns in seconds.</h2>
+            <p class="sectionHead__subtitle">Screens, UI elements, and flows modeled as reusable components.</p>
+          </div>
+
+          <div class="grid3">
+            <article class="card reveal" data-reveal>
+              <div class="card__iconWrap"><span class="icon icon--screens" aria-hidden="true"></span></div>
+              <h3 class="card__title">Screens</h3>
+              <p class="card__body">Visual elements organized as reusable blocks.</p>
+            </article>
+            <article class="card reveal" data-reveal>
+              <div class="card__iconWrap"><span class="icon icon--ui" aria-hidden="true"></span></div>
+              <h3 class="card__title">UI Elements</h3>
+              <p class="card__body">Consistent spacing, radius, borders, and shadows.</p>
+            </article>
+            <article class="card reveal" data-reveal>
+              <div class="card__iconWrap"><span class="icon icon--flow" aria-hidden="true"></span></div>
+              <h3 class="card__title">Flows</h3>
+              <p class="card__body">Transitions, hotspots, and step context.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="flows" class="section section--alt">
+        <div class="container flowWrap">
+          <div class="flowCopy reveal" data-reveal>
+            <h2 class="sectionHead__title">Explore entire user journeys with flows.</h2>
+            <p class="sectionHead__subtitle">Hotspots open a local modal; no external links required.</p>
+          </div>
+
+          <div class="flowPanel reveal" data-reveal>
+            <div class="flowPanel__mock" data-flow-hotspots>
+              <button class="hotspot" type="button" style="--x: 28%; --y: 38%" data-hotspot="0" aria-label="Open step: Welcome">
+                <span class="hotspot__ring" aria-hidden="true"></span><span class="hotspot__dot" aria-hidden="true"></span>
+              </button>
+              <button class="hotspot" type="button" style="--x: 63%; --y: 54%" data-hotspot="1" aria-label="Open step: Account Setup">
+                <span class="hotspot__ring" aria-hidden="true"></span><span class="hotspot__dot" aria-hidden="true"></span>
+              </button>
+              <button class="hotspot" type="button" style="--x: 44%; --y: 72%" data-hotspot="2" aria-label="Open step: Subscription">
+                <span class="hotspot__ring" aria-hidden="true"></span><span class="hotspot__dot" aria-hidden="true"></span>
+              </button>
+
+              <div class="flowPanel__screen" aria-hidden="true">
+                <div class="stepCard stepCard--1">Welcome</div>
+                <div class="stepCard stepCard--2">Account Setup</div>
+                <div class="stepCard stepCard--3">Subscription & Paywall</div>
+                <div class="stepCard stepCard--4">Checkout</div>
+              </div>
+            </div>
+
+            <div class="flowPanel__steps" aria-label="Flow steps">
+              <button class="stepBtn is-active" type="button" data-step="0">1. Welcome</button>
+              <button class="stepBtn" type="button" data-step="1">2. Account Setup</button>
+              <button class="stepBtn" type="button" data-step="2">3. Subscription</button>
+              <button class="stepBtn" type="button" data-step="3">4. Checkout</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="create" class="section">
+        <div class="container">
+          <div class="sectionHead reveal" data-reveal>
+            <h2 class="sectionHead__title">From inspiration to creation.</h2>
+            <p class="sectionHead__subtitle">Local, rebuild-friendly interaction patterns.</p>
+          </div>
+
+          <div class="grid3">
+            <article class="card reveal" data-reveal>
+              <div class="card__iconWrap card__iconWrap--primary"><span class="icon icon--copy" aria-hidden="true"></span></div>
+              <h3 class="card__title">Copy to Figma</h3>
+              <p class="card__body">Export-ready structure (demo).</p>
+              <div class="card__actions"><button class="btn btn-secondary btn-block" type="button">Copy</button></div>
+            </article>
+            <article class="card reveal" data-reveal>
+              <div class="card__iconWrap"><span class="icon icon--bookmark" aria-hidden="true"></span></div>
+              <h3 class="card__title">Save to collections</h3>
+              <p class="card__body">Organize patterns into sets.</p>
+              <div class="card__actions"><button class="btn btn-secondary btn-block" type="button">Save</button></div>
+            </article>
+            <article class="card reveal" data-reveal>
+              <div class="card__iconWrap"><span class="icon icon--comment" aria-hidden="true"></span></div>
+              <h3 class="card__title">Leave comments</h3>
+              <p class="card__body">Add context so you can rebuild later.</p>
+              <div class="card__actions"><button class="btn btn-secondary btn-block" type="button">Comment</button></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="testimonials" class="section section--alt">
+        <div class="container">
+          <div class="sectionHead reveal" data-reveal>
+            <h2 class="sectionHead__title">What our users are saying</h2>
+            <p class="sectionHead__subtitle">A simple local slider with dots and keyboard support.</p>
+          </div>
+
+          <div class="slider reveal" data-reveal data-slider>
+            <div class="slider__controls">
+              <button class="icon-btn" type="button" aria-label="Previous" data-slider-prev>
+                <span class="icon icon--chev-left" aria-hidden="true"></span>
+              </button>
+              <button class="icon-btn" type="button" aria-label="Next" data-slider-next>
+                <span class="icon icon--chev-right" aria-hidden="true"></span>
+              </button>
+            </div>
+
+            <div class="slider__viewport">
+              <div class="slider__track" data-slider-track>
+                <article class="quoteCard" data-quote>
+                  <div class="quoteCard__top">
+                    <span class="quoteCard__avatar" aria-hidden="true">S</span>
+                    <div>
+                      <div class="quoteCard__name">Sebastian Speier</div>
+                      <div class="quoteCard__role">Product Design</div>
+                    </div>
+                  </div>
+                  <p class="quoteCard__text">“A handy reference for real-world mobile patterns. The structure makes reuse easy.”</p>
+                </article>
+                <article class="quoteCard" data-quote>
+                  <div class="quoteCard__top">
+                    <span class="quoteCard__avatar" aria-hidden="true">M</span>
+                    <div>
+                      <div class="quoteCard__name">Meng To</div>
+                      <div class="quoteCard__role">Design Systems</div>
+                    </div>
+                  </div>
+                  <p class="quoteCard__text">“Patterns + flows in one place. Micro-interactions are what static screenshots miss.”</p>
+                </article>
+                <article class="quoteCard" data-quote>
+                  <div class="quoteCard__top">
+                    <span class="quoteCard__avatar" aria-hidden="true">R</span>
+                    <div>
+                      <div class="quoteCard__name">Rachel How</div>
+                      <div class="quoteCard__role">UX Research</div>
+                    </div>
+                  </div>
+                  <p class="quoteCard__text">“Link-free demo helps verify visual rhythm and token mapping before rebuilding.”</p>
+                </article>
+              </div>
+            </div>
+
+            <div class="slider__dots" data-slider-dots aria-label="Slide selector"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer__row">
+        <div class="footer__left">
+          <div class="footer__brand">
+            <span class="brand__dot" aria-hidden="true"></span>
+            <span class="brand__name">Mobbin</span>
+          </div>
+          <p class="footer__muted">Local UI demo for build/testing workflows. No external links.</p>
+        </div>
+        <div class="footer__right">
+          <button class="btn btn-ghost" type="button">Pricing</button>
+          <button class="btn btn-ghost" type="button">Support</button>
+          <button class="btn btn-primary" type="button">Join for free</button>
+        </div>
+      </div>
+    </footer>
+
+    <div class="modal" id="prototypeModal" hidden role="dialog" aria-modal="true" aria-label="Prototype walkthrough">
+      <div class="modal__backdrop" data-modal-close></div>
+      <div class="modal__card">
+        <button class="icon-btn modal__close" type="button" aria-label="Close" data-modal-close>
+          <span class="icon icon--close" aria-hidden="true"></span>
+        </button>
+        <div class="modal__header">
+          <div class="pill pill--tight"><span class="icon icon--play" aria-hidden="true"></span>Prototype mode</div>
+          <h3 class="modal__title" id="modalTitle">Welcome</h3>
+          <p class="modal__body" id="modalBody">Local modal for hotspot -> step context.</p>
+        </div>
+        <div class="modal__preview" aria-hidden="true">
+          <div class="modalSteps">
+            <div class="modalStep modalStep--active" data-modal-step="0">1. Welcome</div>
+            <div class="modalStep" data-modal-step="1">2. Account Setup</div>
+            <div class="modalStep" data-modal-step="2">3. Subscription</div>
+            <div class="modalStep" data-modal-step="3">4. Checkout</div>
+          </div>
+        </div>
+        <div class="modal__footer">
+          <button class="btn btn-secondary" type="button" data-modal-prev>Previous</button>
+          <button class="btn btn-primary" type="button" data-modal-next>Next</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="assets/app.js" defer></script>
+</body>
 </html>
 

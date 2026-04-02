@@ -1,0 +1,89 @@
+:root {
+  --container: 1040px;
+
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface2: #fafafa;
+  --text: #1d1d1f;
+  --muted: #6e6e73;
+
+  --border: rgba(60, 60, 67, 0.18);
+  --card: #f7f7f8;
+  --card-2: #ffffff;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.06);
+
+  --radius: 16px;
+  --radius-sm: 12px;
+
+  --primary: #0a66ff;
+  --primary-2: #0057ff;
+
+  --ring: rgba(10, 102, 255, 0.35);
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-fast: 160ms;
+  --dur: 260ms;
+  --dur-slow: 700ms;
+
+  --font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", "Liberation Sans", sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg: #0b0b10;
+  --surface: #0f0f16;
+  --surface2: rgba(255, 255, 255, 0.06);
+  --text: #f2f2f4;
+  --muted: rgba(242, 242, 244, 0.7);
+
+  --border: rgba(255, 255, 255, 0.14);
+  --card: rgba(255, 255, 255, 0.06);
+  --card-2: rgba(255, 255, 255, 0.08);
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.45;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Scroll reveal base */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+

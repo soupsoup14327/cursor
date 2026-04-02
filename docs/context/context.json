@@ -1,0 +1,98 @@
+{
+  "project": {
+    "name": "Mobbin-inspired local demo",
+    "purpose": "Link-free HTML/CSS/JS recreation for style-token mapping and future rebuilds.",
+    "framework": "none"
+  },
+  "tokens": {
+    "cssVariables": [
+      "--container",
+      "--bg",
+      "--surface",
+      "--surface2",
+      "--text",
+      "--muted",
+      "--border",
+      "--card",
+      "--card-2",
+      "--shadow-1",
+      "--shadow-2",
+      "--radius",
+      "--radius-sm",
+      "--primary",
+      "--primary-2",
+      "--ring",
+      "--ease",
+      "--dur-fast",
+      "--dur",
+      "--dur-slow",
+      "--font"
+    ],
+    "themes": {
+      "light": {
+        "dataAttribute": "html[data-theme=light]",
+        "note": "Default token values in tokens.css"
+      },
+      "dark": {
+        "dataAttribute": "html[data-theme=dark]",
+        "note": "Overrides in tokens.css"
+      }
+    }
+  },
+  "components": [
+    {
+      "name": "Top navigation",
+      "selectors": [".topbar", ".topbar__row", ".nav", ".nav__item", ".topbar__actions"],
+      "primaryTokens": ["--border", "--muted", "--ring", "--primary"]
+    },
+    {
+      "name": "Hero / Preview",
+      "selectors": [".hero", ".previewCard", ".mockApp", ".statsStrip", ".stat"],
+      "primaryTokens": ["--primary", "--border", "--shadow-2", "--radius"]
+    },
+    {
+      "name": "Pattern cards",
+      "selectors": [".grid3", ".card", ".card__iconWrap"],
+      "primaryTokens": ["--border", "--card-2", "--shadow-1", "--radius"]
+    },
+    {
+      "name": "Flows prototype",
+      "selectors": [".flowPanel__mock", ".hotspot", ".stepBtn", ".flowPanel__screen"],
+      "primaryTokens": ["--primary", "--ring", "--border"]
+    },
+    {
+      "name": "Prototype modal",
+      "selectors": [".modal", ".modal__card", ".modalSteps", ".modalStep--active"],
+      "primaryTokens": ["--border", "--shadow-2", "--primary"]
+    },
+    {
+      "name": "Testimonials slider",
+      "selectors": [".slider", ".slider__track", ".quoteCard", ".slider__dots .dot"],
+      "primaryTokens": ["--dur", "--ease", "--primary"]
+    }
+  ],
+  "animations": [
+    { "name": "floatA", "type": "background drift", "usedBy": [".orb--a"] },
+    { "name": "floatB", "type": "background drift", "usedBy": [".orb--b"] },
+    { "name": "floatC", "type": "background drift", "usedBy": [".orb--c"] },
+    { "name": "dotPulse", "type": "pulse", "usedBy": [".hotspotDot"] },
+    { "name": "ringPulse", "type": "pulse ring", "usedBy": [".hotspot__ring"] }
+  ],
+  "icons": {
+    "sun": "assets/icons/sun.svg",
+    "moon": "assets/icons/moon.svg",
+    "spark": "assets/icons/spark.svg",
+    "play": "assets/icons/play.svg",
+    "close": "assets/icons/close.svg",
+    "chev-left": "assets/icons/chev-left.svg",
+    "chev-right": "assets/icons/chev-right.svg",
+    "screens": "assets/icons/screens.svg",
+    "ui": "assets/icons/ui.svg",
+    "flow": "assets/icons/flow.svg",
+    "copy": "assets/icons/copy.svg",
+    "bookmark": "assets/icons/bookmark.svg",
+    "comment": "assets/icons/comment.svg"
+  },
+  "noExternalLinks": true
+}
+
