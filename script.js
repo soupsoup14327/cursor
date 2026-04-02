@@ -126,7 +126,8 @@ function runTurn(playerAction) {
   state.player.guarding = playerAction === "guard";
   const playerResult = executeAction(state.player, state.enemy, playerAction);
   if (playerResult.hit) {
-    animateHit(el.enemyCard);
+    animateAttackWindup(el.playerCard);
+    animateDamage(el.enemyCard, { screenShake: false });
   }
   appendLog(playerResult.log);
   if (playerResult.hit) {
@@ -145,7 +146,8 @@ function runTurn(playerAction) {
     state.enemy.guarding = enemyAction === "guard";
     const enemyResult = executeAction(state.enemy, state.player, enemyAction);
     if (enemyResult.hit) {
-      animateHit(el.playerCard);
+      animateAttackWindup(el.enemyCard);
+      animateDamage(el.playerCard, { screenShake: true });
     }
     appendLog(enemyResult.log);
     if (!enemyResult.hit) {
@@ -252,9 +254,39 @@ function syncUI() {
   el.wins.textContent = String(state.wins);
 }
 
-function animateHit(cardElement) {
+const DAMAGE_ANIM_MS = 360;
+
+function animateAttackWindup(cardElement) {
+  cardElement.classList.remove("attack-lunge");
+  void cardElement.offsetWidth;
+  cardElement.classList.add("attack-lunge");
+  setTimeout(() => cardElement.classList.remove("attack-lunge"), 300);
+}
+
+function animateDamage(cardElement, { screenShake = false } = {}) {
+  cardElement.classList.remove("hit");
+  void cardElement.offsetWidth;
   cardElement.classList.add("hit");
-  setTimeout(() => cardElement.classList.remove("hit"), 190);
+  const hpWrap = cardElement.querySelector(".hp-wrap");
+  if (hpWrap) {
+    hpWrap.classList.remove("hp-flash");
+    void hpWrap.offsetWidth;
+    hpWrap.classList.add("hp-flash");
+  }
+  if (screenShake && el.battle) {
+    el.battle.classList.remove("screen-shake");
+    void el.battle.offsetWidth;
+    el.battle.classList.add("screen-shake");
+  }
+  setTimeout(() => {
+    cardElement.classList.remove("hit");
+    if (hpWrap) {
+      hpWrap.classList.remove("hp-flash");
+    }
+    if (el.battle) {
+      el.battle.classList.remove("screen-shake");
+    }
+  }, DAMAGE_ANIM_MS);
 }
 
 function appendLog(message) {
