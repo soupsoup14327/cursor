@@ -1,7 +1,7 @@
 {
-  "name": "anime-arena",
+  "name": "module-battle",
   "version": "1.0.0",
-  "description": "Anime Arena — мини-игра",
+  "description": "Module battle — пошаговый бой в духе D&D",
   "main": "electron-main.js",
   "private": true,
   "scripts": {
@@ -13,13 +13,12 @@
     "electron-builder": "^25.1.8"
   },
   "build": {
-    "appId": "com.animearena.game",
-    "productName": "Anime Arena",
+    "appId": "com.modulebattle.game",
+    "productName": "Module battle",
     "files": [
       "index.html",
       "script.js",
       "style.css",
-      "assets/**/*",
       "electron-main.js"
     ],
     "directories": {

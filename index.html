@@ -3,26 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Anime Arena - Мини-игра</title>
+    <title>Module battle</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Russo+One&family=Inter:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./style.css?v=4" />
+    <link rel="stylesheet" href="./style.css?v=5" />
   </head>
   <body>
-    <div class="bg-glow bg-glow--left"></div>
-    <div class="bg-glow bg-glow--right"></div>
+    <div class="bg-texture" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow--ember"></div>
+    <div class="bg-glow bg-glow--moon"></div>
     <main class="layout">
       <header class="panel header">
-        <h1>Anime Arena</h1>
-        <p>Выбери героя и победи босса в пошаговом дуэле.</p>
+        <p class="header__tag">Настольная сцена · пошаговый бой</p>
+        <h1>Module battle</h1>
+        <p class="header__lead">
+          Выбери героя, брось вызов случайному врагу из модуля и переживи столкновение без лишних скроллов на телефоне.
+        </p>
       </header>
 
       <section id="hero-picker" class="panel">
-        <h2>Выбор персонажа</h2>
+        <h2>Кто ведёт партию?</h2>
         <div id="hero-grid" class="hero-grid"></div>
       </section>
 
@@ -30,7 +34,7 @@
         <div class="fighters">
           <article class="card" id="player-card">
             <h3 id="player-name">Герой</h3>
-            <img id="player-avatar" alt="Аватар игрока" />
+            <div class="avatar-sigil" id="player-avatar" aria-hidden="true"></div>
             <div class="hp-wrap">
               <div id="player-hp-bar" class="hp-bar"></div>
             </div>
@@ -38,15 +42,17 @@
             <div class="mana-wrap">
               <div id="player-mana-bar" class="mana-bar"></div>
             </div>
-            <p id="player-mana-text" class="mana-text">MP: 0/0</p>
-            <p id="player-status" class="status">Готов к бою</p>
+            <p id="player-mana-text" class="mana-text">Магия: 0/0</p>
+            <p id="player-status" class="status">Готов к сцене</p>
           </article>
 
-          <div class="versus">VS</div>
+          <div class="versus" role="presentation">
+            <span class="versus__text">VS</span>
+          </div>
 
           <article class="card enemy" id="enemy-card">
-            <h3 id="enemy-name">Босс</h3>
-            <img id="enemy-avatar" alt="Аватар соперника" />
+            <h3 id="enemy-name">Враг</h3>
+            <div class="avatar-sigil avatar-sigil--foe" id="enemy-avatar" aria-hidden="true"></div>
             <div class="hp-wrap">
               <div id="enemy-hp-bar" class="hp-bar enemy"></div>
             </div>
@@ -54,33 +60,33 @@
             <div class="mana-wrap">
               <div id="enemy-mana-bar" class="mana-bar enemy"></div>
             </div>
-            <p id="enemy-mana-text" class="mana-text">MP: 0/0</p>
-            <p id="enemy-status" class="status">...</p>
+            <p id="enemy-mana-text" class="mana-text">Магия: 0/0</p>
+            <p id="enemy-status" class="status">…</p>
           </article>
         </div>
 
         <section class="controls">
           <div class="controls-row">
-            <button class="action-btn" data-action="attack">Обычная атака</button>
-            <button class="action-btn" data-action="guard">Блок (снижает урон)</button>
-            <button id="restart-btn" class="action-btn restart hidden">Новый бой</button>
+            <button class="action-btn" data-action="attack">Удар оружием</button>
+            <button class="action-btn" data-action="guard">Укрытие / парирование</button>
+            <button id="restart-btn" class="action-btn restart hidden">Новая сцена</button>
           </div>
-          <div id="skill-bar" class="skill-bar" aria-label="Умения героя"></div>
+          <div id="skill-bar" class="skill-bar" aria-label="Заклинания и приёмы"></div>
         </section>
 
         <section class="hud">
           <p><strong>Раунд:</strong> <span id="round">1</span></p>
-          <p><strong>Комбо:</strong> <span id="combo">0</span></p>
-          <p><strong>Победы:</strong> <span id="wins">0</span></p>
+          <p><strong>Серия:</strong> <span id="combo">0</span></p>
+          <p><strong>Побед в кампании:</strong> <span id="wins">0</span></p>
         </section>
 
         <section class="log-wrap">
-          <h4>Лог боя</h4>
+          <h4>Журнал столкновения</h4>
           <ul id="battle-log"></ul>
         </section>
       </section>
     </main>
 
-    <script src="./script.js?v=5"></script>
+    <script src="./script.js?v=6"></script>
   </body>
 </html>

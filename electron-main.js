@@ -3,6 +3,7 @@ const path = require("path");
 
 function createWindow() {
   const win = new BrowserWindow({
+    title: "Module battle",
     width: 1120,
     height: 820,
     minWidth: 800,
