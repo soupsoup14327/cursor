@@ -549,6 +549,116 @@ h4 {
   display: none !important;
 }
 
+.toast-root {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  max-width: min(92vw, 420px);
+}
+
+.toast {
+  background: linear-gradient(180deg, #2e2618, #1a1510);
+  border: 1px solid var(--gold-dim);
+  color: var(--parchment);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: 0 8px 28px rgb(0 0 0 / 45%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.toast--show {
+  opacity: 1;
+}
+
+.dice-panel {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: rgb(0 0 0 / 22%);
+  border: 1px solid rgb(92 74 46 / 35%);
+  border-radius: 10px;
+  font-size: 0.82rem;
+}
+
+.dice-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 6px;
+}
+
+.dice-row:last-child {
+  margin-bottom: 0;
+}
+
+.dice-row__who {
+  min-width: 5.5rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.dice-badge {
+  color: var(--muted);
+}
+
+.dice-badge strong {
+  color: var(--gold);
+  font-family: Cinzel, serif;
+}
+
+.dice-row__hint {
+  color: var(--moon);
+  font-size: 0.78rem;
+}
+
+.effect-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  min-height: 22px;
+  margin-bottom: 6px;
+}
+
+.fx-tag {
+  font-size: 0.68rem;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: 1px solid rgb(255 255 255 / 12%);
+}
+
+.fx-tag--fire {
+  background: rgb(180 60 30 / 35%);
+  color: #ffb89a;
+}
+
+.fx-tag--poison {
+  background: rgb(60 120 50 / 35%);
+  color: #b8e6a8;
+}
+
+.fx-tag--bleed {
+  background: rgb(120 30 40 / 35%);
+  color: #ffb0b8;
+}
+
+.fx-tag--cold {
+  background: rgb(80 130 180 / 30%);
+  color: #b8d8ff;
+}
+
 @media (width <= 860px) {
   .fighters {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);

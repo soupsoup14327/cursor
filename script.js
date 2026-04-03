@@ -1,20 +1,40 @@
+const EFFECT_TYPES = {
+  fire: { label: "Огонь", dot: 5 },
+  poison: { label: "Яд", dot: 4 },
+  bleed: { label: "Кровотечение", dot: 3 },
+  cold: { label: "Мороз", dot: 0, reduceNextDamage: 0.82 },
+};
+
+const SCENARIO_POPUPS = [
+  "Под ногами скользкий камень — вы удерживаете равновесие.",
+  "На миг чувствуете прилив сил.",
+  "Замечаете слабое звено в защите противника.",
+  "Старая рана нычёт, но не сковывает шаг.",
+  "Вспышка интуиции: следующий удар будет удачнее.",
+  "Пыль в глаза — моргаете, но удар всё равно летит.",
+  "Вы слышите шёпот мастера за столом и улыбаетесь.",
+  "Пальцы онемели от холода, но хватка крепка.",
+  "Случайное блеснувшее солнце ослепляет врага на доль секунды.",
+  "Камень под ногой сдвигается — вы успеваете вперёд.",
+];
+
 const heroes = [
   {
     id: "solaris",
     name: "Соларис Нёбесный",
     sigil: "S",
     sigilColor: "#c9a227",
-    maxHp: 110,
-    attack: 19,
-    crit: 0.22,
+    maxHp: 168,
+    attack: 17,
+    crit: 0.2,
     maxMana: 100,
     manaRegen: 14,
     skills: [
-      { id: "sol_1", name: "Священное пламя", cost: 18, kind: "damage", mult: 1.75 },
-      { id: "sol_2", name: "Направляющий луч", cost: 32, kind: "damage", mult: 2.35 },
-      { id: "sol_3", name: "Благословение удара", cost: 22, kind: "buff_next", nextMult: 1.55 },
-      { id: "sol_4", name: "Лечение ран", cost: 25, kind: "heal", heal: 24 },
-      { id: "sol_5", name: "Пламя небес", cost: 48, kind: "damage", mult: 3.05, cooldown: 2 },
+      { id: "sol_1", name: "Священное пламя", cost: 18, kind: "damage", mult: 1.45, applyStatus: { type: "fire", turns: 2 } },
+      { id: "sol_2", name: "Направляющий луч", cost: 32, kind: "damage", mult: 2.0 },
+      { id: "sol_3", name: "Благословение удара", cost: 22, kind: "buff_next", nextMult: 1.5 },
+      { id: "sol_4", name: "Лечение ран", cost: 25, kind: "heal", heal: 32 },
+      { id: "sol_5", name: "Пламя небес", cost: 48, kind: "damage", mult: 2.55, cooldown: 2, applyStatus: { type: "fire", turns: 3 } },
     ],
   },
   {
@@ -22,17 +42,17 @@ const heroes = [
     name: "Торгун Каменный",
     sigil: "T",
     sigilColor: "#5c7a9e",
-    maxHp: 135,
-    attack: 15,
-    crit: 0.12,
+    maxHp: 205,
+    attack: 14,
+    crit: 0.11,
     maxMana: 90,
     manaRegen: 12,
     skills: [
-      { id: "tor_1", name: "Таран", cost: 12, kind: "damage", mult: 1.55 },
-      { id: "tor_2", name: "Стойка щитоносца", cost: 18, kind: "guard_heal", heal: 16 },
-      { id: "tor_3", name: "Удар щитом", cost: 28, kind: "damage_heal", mult: 1.85, heal: 10 },
+      { id: "tor_1", name: "Таран", cost: 12, kind: "damage", mult: 1.35 },
+      { id: "tor_2", name: "Стойка щитоносца", cost: 18, kind: "guard_heal", heal: 22 },
+      { id: "tor_3", name: "Удар щитом", cost: 28, kind: "damage_heal", mult: 1.55, heal: 12 },
       { id: "tor_4", name: "Сбить почву", cost: 20, kind: "debuff_enemy", weakMult: 0.62 },
-      { id: "tor_5", name: "Сокрушитель", cost: 42, kind: "damage", mult: 2.55, cooldown: 1 },
+      { id: "tor_5", name: "Сокрушитель", cost: 42, kind: "damage", mult: 2.15, cooldown: 1, applyStatus: { type: "bleed", turns: 2 } },
     ],
   },
   {
@@ -40,17 +60,17 @@ const heroes = [
     name: "Кэрис Ночная",
     sigil: "K",
     sigilColor: "#8b3a5c",
-    maxHp: 95,
-    attack: 24,
-    crit: 0.3,
+    maxHp: 145,
+    attack: 21,
+    crit: 0.28,
     maxMana: 110,
     manaRegen: 13,
     skills: [
-      { id: "ker_1", name: "Быстрый выпад", cost: 15, kind: "damage", mult: 1.7 },
+      { id: "ker_1", name: "Быстрый выпад", cost: 15, kind: "damage", mult: 1.45, applyStatus: { type: "poison", turns: 2 } },
       { id: "ker_2", name: "Метка охотника", cost: 26, kind: "mark_crit" },
-      { id: "ker_3", name: "Удар вампира", cost: 30, kind: "lifesteal", mult: 2.05, steal: 0.38 },
+      { id: "ker_3", name: "Удар вампира", cost: 30, kind: "lifesteal", mult: 1.75, steal: 0.38 },
       { id: "ker_4", name: "Ярость охотника", cost: 18, kind: "rage", rageTurns: 2 },
-      { id: "ker_5", name: "Казнь тени", cost: 55, kind: "damage", mult: 3.15, cooldown: 2 },
+      { id: "ker_5", name: "Казнь тени", cost: 55, kind: "damage", mult: 2.55, cooldown: 2, applyStatus: { type: "bleed", turns: 3 } },
     ],
   },
 ];
@@ -61,16 +81,16 @@ const bosses = [
     name: "Тень из Ксарта",
     sigil: "X",
     sigilColor: "#4a4a6a",
-    maxHp: 150,
-    attack: 17,
-    crit: 0.2,
+    maxHp: 218,
+    attack: 15,
+    crit: 0.18,
     maxMana: 95,
     manaRegen: 12,
     skills: [
-      { id: "bx1", name: "Хватка сумерек", cost: 14, mult: 1.65 },
-      { id: "bx2", name: "Волна тьмы", cost: 28, mult: 2.15 },
-      { id: "bx3", name: "Пожирание жизни", cost: 22, mult: 1.45, heal: 12 },
-      { id: "bx4", name: "Кошмарный вид", cost: 38, mult: 2.45, cooldown: 1 },
+      { id: "bx1", name: "Хватка сумерек", cost: 14, mult: 1.45, applyStatus: { type: "cold", turns: 1 } },
+      { id: "bx2", name: "Волна тьмы", cost: 28, mult: 1.85 },
+      { id: "bx3", name: "Пожирание жизни", cost: 22, mult: 1.3, heal: 16 },
+      { id: "bx4", name: "Кошмарный вид", cost: 38, mult: 2.1, cooldown: 1, applyStatus: { type: "poison", turns: 2 } },
     ],
   },
   {
@@ -78,16 +98,16 @@ const bosses = [
     name: "Мордвин Ледяной",
     sigil: "M",
     sigilColor: "#5a8aaa",
-    maxHp: 138,
-    attack: 18,
-    crit: 0.18,
+    maxHp: 200,
+    attack: 16,
+    crit: 0.16,
     maxMana: 100,
     manaRegen: 13,
     skills: [
-      { id: "bm1", name: "Ледяной шип", cost: 13, mult: 1.6 },
-      { id: "bm2", name: "Морозная волна", cost: 26, mult: 2.05 },
-      { id: "bm3", name: "Град стрел", cost: 32, mult: 2.25 },
-      { id: "bm4", name: "Ледяная могила", cost: 44, mult: 2.65, cooldown: 2 },
+      { id: "bm1", name: "Ледяной шип", cost: 13, mult: 1.4, applyStatus: { type: "cold", turns: 1 } },
+      { id: "bm2", name: "Морозная волна", cost: 26, mult: 1.8 },
+      { id: "bm3", name: "Град стрел", cost: 32, mult: 1.95 },
+      { id: "bm4", name: "Ледяная могила", cost: 44, mult: 2.35, cooldown: 2, applyStatus: { type: "cold", turns: 2 } },
     ],
   },
   {
@@ -95,16 +115,16 @@ const bosses = [
     name: "Курн Железнорожный",
     sigil: "G",
     sigilColor: "#7a7a82",
-    maxHp: 165,
-    attack: 15,
-    crit: 0.14,
+    maxHp: 238,
+    attack: 13,
+    crit: 0.12,
     maxMana: 85,
     manaRegen: 11,
     skills: [
-      { id: "bk1", name: "Каменный кулак", cost: 12, mult: 1.55 },
-      { id: "bk2", name: "Обвал", cost: 24, mult: 1.95 },
-      { id: "bk3", name: "Слить камень", cost: 20, mult: 1.2, heal: 18 },
-      { id: "bk4", name: "Перегрев ядра", cost: 40, mult: 2.5, cooldown: 1 },
+      { id: "bk1", name: "Каменный кулак", cost: 12, mult: 1.35 },
+      { id: "bk2", name: "Обвал", cost: 24, mult: 1.7 },
+      { id: "bk3", name: "Слить камень", cost: 20, mult: 1.2, heal: 22 },
+      { id: "bk4", name: "Перегрев ядра", cost: 40, mult: 2.15, cooldown: 1, applyStatus: { type: "fire", turns: 2 } },
     ],
   },
   {
@@ -112,16 +132,16 @@ const bosses = [
     name: "Лорен Изумрудная",
     sigil: "V",
     sigilColor: "#8b1538",
-    maxHp: 128,
-    attack: 21,
-    crit: 0.26,
+    maxHp: 188,
+    attack: 18,
+    crit: 0.24,
     maxMana: 105,
     manaRegen: 14,
     skills: [
-      { id: "bl1", name: "Бич крови", cost: 15, mult: 1.7 },
-      { id: "bl2", name: "Пир клинков", cost: 29, mult: 2.2 },
-      { id: "bl3", name: "Укус", cost: 24, mult: 1.85, heal: 14 },
-      { id: "bl4", name: "Кровавый обет", cost: 46, mult: 2.75, cooldown: 2 },
+      { id: "bl1", name: "Бич крови", cost: 15, mult: 1.45, applyStatus: { type: "bleed", turns: 2 } },
+      { id: "bl2", name: "Пир клинков", cost: 29, mult: 1.9 },
+      { id: "bl3", name: "Укус", cost: 24, mult: 1.65, heal: 18, applyStatus: { type: "poison", turns: 1 } },
+      { id: "bl4", name: "Кровавый обет", cost: 46, mult: 2.35, cooldown: 2, applyStatus: { type: "bleed", turns: 3 } },
     ],
   },
   {
@@ -129,16 +149,16 @@ const bosses = [
     name: "Архимаг Ворн",
     sigil: "A",
     sigilColor: "#6b4c9c",
-    maxHp: 142,
-    attack: 19,
-    crit: 0.22,
+    maxHp: 208,
+    attack: 16,
+    crit: 0.2,
     maxMana: 110,
     manaRegen: 15,
     skills: [
-      { id: "bz1", name: "Снаряд силы", cost: 14, mult: 1.68 },
-      { id: "bz2", name: "Проклятие", cost: 27, mult: 2.1 },
-      { id: "bz3", name: "Жертва силы", cost: 18, mult: 1.4, heal: 16 },
-      { id: "bz4", name: "Метеор Ворна", cost: 48, mult: 2.7, cooldown: 2 },
+      { id: "bz1", name: "Снаряд силы", cost: 14, mult: 1.45, applyStatus: { type: "fire", turns: 1 } },
+      { id: "bz2", name: "Проклятие", cost: 27, mult: 1.85, applyStatus: { type: "poison", turns: 2 } },
+      { id: "bz3", name: "Жертва силы", cost: 18, mult: 1.25, heal: 20 },
+      { id: "bz4", name: "Метеор Ворна", cost: 48, mult: 2.35, cooldown: 2, applyStatus: { type: "fire", turns: 2 } },
     ],
   },
 ];
@@ -159,6 +179,8 @@ const state = {
   wins: 0,
   busy: false,
   finished: false,
+  playerTurnDice: { d20: 0, d8: 0 },
+  enemyTurnDice: { d20: 0, d8: 0 },
 };
 
 const el = {
@@ -172,6 +194,7 @@ const el = {
   playerManaBar: document.querySelector("#player-mana-bar"),
   playerManaText: document.querySelector("#player-mana-text"),
   playerStatus: document.querySelector("#player-status"),
+  playerEffects: document.querySelector("#player-effects"),
   enemyName: document.querySelector("#enemy-name"),
   enemyAvatar: document.querySelector("#enemy-avatar"),
   enemyHpBar: document.querySelector("#enemy-hp-bar"),
@@ -179,6 +202,7 @@ const el = {
   enemyManaBar: document.querySelector("#enemy-mana-bar"),
   enemyManaText: document.querySelector("#enemy-mana-text"),
   enemyStatus: document.querySelector("#enemy-status"),
+  enemyEffects: document.querySelector("#enemy-effects"),
   round: document.querySelector("#round"),
   combo: document.querySelector("#combo"),
   wins: document.querySelector("#wins"),
@@ -188,10 +212,29 @@ const el = {
   restartBtn: document.querySelector("#restart-btn"),
   skillBar: document.querySelector("#skill-bar"),
   baseActions: [...document.querySelectorAll(".action-btn[data-action]")],
+  dicePD20: document.querySelector("#dice-p-d20"),
+  dicePD8: document.querySelector("#dice-p-d8"),
+  dicePBonus: document.querySelector("#dice-p-bonus"),
+  diceED20: document.querySelector("#dice-e-d20"),
+  diceED8: document.querySelector("#dice-e-d8"),
+  diceEBonus: document.querySelector("#dice-e-bonus"),
+  toastRoot: document.querySelector("#toast-root"),
 };
 
 renderHeroPicker();
 wireActions();
+
+function rollD20() {
+  return 1 + Math.floor(Math.random() * 20);
+}
+
+function rollD8() {
+  return 1 + Math.floor(Math.random() * 8);
+}
+
+function diceBonus(d20, d8) {
+  return Math.max(0, Math.floor((d20 + d8) / 4) - 2);
+}
 
 function pickRandomBoss() {
   return bosses[Math.floor(Math.random() * bosses.length)];
@@ -199,6 +242,27 @@ function pickRandomBoss() {
 
 function randomFlavor() {
   return ENCOUNTER_FLAVOR[Math.floor(Math.random() * ENCOUNTER_FLAVOR.length)];
+}
+
+function showToast(text) {
+  if (!el.toastRoot) {
+    return;
+  }
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = text;
+  el.toastRoot.appendChild(t);
+  requestAnimationFrame(() => t.classList.add("toast--show"));
+  setTimeout(() => {
+    t.classList.remove("toast--show");
+    setTimeout(() => t.remove(), 300);
+  }, 2600);
+}
+
+function maybeRandomScenarioPopup() {
+  if (Math.random() < 0.42) {
+    showToast(SCENARIO_POPUPS[Math.floor(Math.random() * SCENARIO_POPUPS.length)]);
+  }
 }
 
 function applySigil(domEl, fighter) {
@@ -220,6 +284,8 @@ function cloneFighter(template, isPlayer) {
     guaranteedCrit: false,
     rageTurns: 0,
     attackWeakNext: false,
+    statusEffects: [],
+    nextDamageTakenMod: 1,
   };
   if (isPlayer) {
     f.skillList = template.skills;
@@ -227,6 +293,67 @@ function cloneFighter(template, isPlayer) {
     f.skillList = template.skills.map((s) => ({ ...s }));
   }
   return f;
+}
+
+function addStatus(fighter, type, turns) {
+  const ex = fighter.statusEffects.find((e) => e.type === type);
+  if (ex) {
+    ex.turns += turns;
+  } else {
+    fighter.statusEffects.push({ type, turns });
+  }
+}
+
+function effectStripHtml(fighter) {
+  if (!fighter.statusEffects?.length) {
+    return "";
+  }
+  return fighter.statusEffects
+    .map((e) => {
+      const def = EFFECT_TYPES[e.type];
+      if (!def) {
+        return "";
+      }
+      return `<span class="fx-tag fx-tag--${e.type}">${def.label} ${e.turns}</span>`;
+    })
+    .join("");
+}
+
+function tickEndOfRoundDots() {
+  [state.player, state.enemy].forEach((fighter) => {
+    if (!fighter.statusEffects?.length) {
+      return;
+    }
+    const name = fighter.name;
+    fighter.statusEffects = fighter.statusEffects.filter((e) => {
+      const def = EFFECT_TYPES[e.type];
+      if (!def) {
+        return false;
+      }
+      if (def.dot > 0) {
+        const dmg = def.dot;
+        fighter.hp = Math.max(0, fighter.hp - dmg);
+        appendLog(`${name} страдает от «${def.label}»: −${dmg} HP.`);
+        e.turns -= 1;
+        return e.turns > 0;
+      }
+      if (e.type === "cold") {
+        e.turns -= 1;
+        return e.turns > 0;
+      }
+      return e.turns > 0;
+    });
+  });
+}
+
+function applyColdDamageMod(defender, baseDamage) {
+  const idx = defender.statusEffects?.findIndex((x) => x.type === "cold");
+  if (idx === -1) {
+    return baseDamage;
+  }
+  const def = EFFECT_TYPES.cold;
+  defender.statusEffects.splice(idx, 1);
+  return Math.round(baseDamage * (def.reduceNextDamage || 1));
 }
 
 function renderHeroPicker() {
@@ -238,7 +365,7 @@ function renderHeroPicker() {
       <div class="hero-sigil" style="--sigil-bg:${hero.sigilColor}">${hero.sigil}</div>
       <div>
         <span class="hero-name">${hero.name}</span>
-        <span class="hero-stats">HP ${hero.maxHp} · Магия ${hero.maxMana} · Сила ${hero.attack} · Угроза крита ${(hero.crit * 100).toFixed(0)}%</span>
+        <span class="hero-stats">HP ${hero.maxHp} · Мана ${hero.maxMana} · Сила ${hero.attack} · Крит ${(hero.crit * 100).toFixed(0)}%</span>
       </div>
     `;
     button.addEventListener("click", () => startBattle(hero));
@@ -256,7 +383,7 @@ function renderSkillBar() {
     btn.type = "button";
     btn.className = "skill-btn";
     btn.dataset.skillId = skill.id;
-    btn.innerHTML = `<span class="skill-btn__name">${skill.name}</span><span class="skill-btn__cost">${skill.cost} маг.</span>`;
+    btn.innerHTML = `<span class="skill-btn__name">${skill.name}</span><span class="skill-btn__cost">${skill.cost} маны</span>`;
     btn.title = skillTip(skill);
     btn.addEventListener("click", () => runTurn("skill", skill.id));
     el.skillBar.appendChild(btn);
@@ -265,7 +392,11 @@ function renderSkillBar() {
 
 function skillTip(s) {
   if (s.kind === "damage") {
-    return `${s.name}: урон ×${s.mult}${s.cooldown ? `, перезарядка ${s.cooldown} раунда` : ""}`;
+    let t = `${s.name}: урон ×${s.mult}${s.cooldown ? `, перезарядка ${s.cooldown} раунда` : ""}`;
+    if (s.applyStatus) {
+      t += ` · ${EFFECT_TYPES[s.applyStatus.type]?.label || ""}`;
+    }
+    return t;
   }
   if (s.kind === "heal") {
     return `${s.name}: +${s.heal} HP`;
@@ -289,9 +420,39 @@ function skillTip(s) {
     return `${s.name}: урон ×${s.mult}, поглощение ${Math.round(s.steal * 100)}%`;
   }
   if (s.kind === "rage") {
-    return `${s.name}: +20% к силе удара на ${s.rageTurns} удара`;
+    return `${s.name}: +20% к силе на ${s.rageTurns} удара`;
   }
   return s.name;
+}
+
+function updateDiceUI(whichSide) {
+  if (whichSide === "player" || whichSide === "both") {
+    const d = state.playerTurnDice;
+    const b = diceBonus(d.d20, d.d8);
+    if (el.dicePD20) {
+      el.dicePD20.textContent = String(d.d20);
+    }
+    if (el.dicePD8) {
+      el.dicePD8.textContent = String(d.d8);
+    }
+    if (el.dicePBonus) {
+      el.dicePBonus.textContent = `бонус к урону: +${b}`;
+    }
+  }
+  if (whichSide === "enemy" || whichSide === "both") {
+    const d = state.enemyTurnDice;
+    const has = d.d20 > 0;
+    const b = has ? diceBonus(d.d20, d.d8) : 0;
+    if (el.diceED20) {
+      el.diceED20.textContent = has ? String(d.d20) : "—";
+    }
+    if (el.diceED8) {
+      el.diceED8.textContent = has ? String(d.d8) : "—";
+    }
+    if (el.diceEBonus) {
+      el.diceEBonus.textContent = has ? `бонус: +${b}` : "бонус: —";
+    }
+  }
 }
 
 function startBattle(heroTemplate) {
@@ -302,6 +463,8 @@ function startBattle(heroTemplate) {
   state.combo = 0;
   state.finished = false;
   state.busy = false;
+  state.playerTurnDice = { d20: rollD20(), d8: rollD8() };
+  state.enemyTurnDice = { d20: 0, d8: 0 };
   el.heroPicker.classList.add("hidden");
   el.battle.classList.remove("hidden");
   el.restartBtn.classList.add("hidden");
@@ -310,6 +473,8 @@ function startBattle(heroTemplate) {
   resetLog();
   appendLog(randomFlavor());
   appendLog(`Столкновение: ${state.player.name} против ${state.enemy.name}.`);
+  appendLog(`Ваш бросок: d20=${state.playerTurnDice.d20}, d8=${state.playerTurnDice.d8} (бонус к урону +${diceBonus(state.playerTurnDice.d20, state.playerTurnDice.d8)}).`);
+  updateDiceUI("both");
   syncUI();
 }
 
@@ -321,6 +486,9 @@ function wireActions() {
     el.heroPicker.classList.remove("hidden");
     el.battle.classList.add("hidden");
     el.skillBar.innerHTML = "";
+    if (el.toastRoot) {
+      el.toastRoot.innerHTML = "";
+    }
   });
 }
 
@@ -331,6 +499,12 @@ function runTurn(playerAction, skillId = null) {
   if (playerAction === "skill" && !skillId) {
     return;
   }
+
+  state.playerTurnDice = { d20: rollD20(), d8: rollD8() };
+  appendLog(`Ваш бросок: d20=${state.playerTurnDice.d20}, d8=${state.playerTurnDice.d8} (бонус +${diceBonus(state.playerTurnDice.d20, state.playerTurnDice.d8)}).`);
+  updateDiceUI("player");
+  maybeRandomScenarioPopup();
+
   state.busy = true;
   toggleActions(true);
 
@@ -338,7 +512,7 @@ function runTurn(playerAction, skillId = null) {
   let playerResult;
 
   if (playerAction === "attack") {
-    playerResult = executeAttack(state.player, state.enemy, { mult: 1, label: "бьёт" });
+    playerResult = executeAttack(state.player, state.enemy, { mult: 1, label: "бьёт", attackerSide: "player" });
   } else if (playerAction === "guard") {
     playerResult = executeGuard(state.player);
   } else if (playerAction === "skill") {
@@ -364,11 +538,18 @@ function runTurn(playerAction, skillId = null) {
   }
 
   setTimeout(() => {
+    state.enemyTurnDice = { d20: rollD20(), d8: rollD8() };
+    appendLog(`Бросок врага: d20=${state.enemyTurnDice.d20}, d8=${state.enemyTurnDice.d8} (бонус +${diceBonus(state.enemyTurnDice.d20, state.enemyTurnDice.d8)}).`);
+    updateDiceUI("enemy");
+    if (Math.random() < 0.28) {
+      showToast(SCENARIO_POPUPS[Math.floor(Math.random() * SCENARIO_POPUPS.length)]);
+    }
+
     const enemyMove = chooseEnemyAction();
     state.enemy.guarding = enemyMove.type === "guard";
     let enemyResult;
     if (enemyMove.type === "attack") {
-      enemyResult = executeAttack(state.enemy, state.player, { mult: 1, label: "бьёт" });
+      enemyResult = executeAttack(state.enemy, state.player, { mult: 1, label: "бьёт", attackerSide: "enemy" });
     } else if (enemyMove.type === "guard") {
       enemyResult = executeGuard(state.enemy);
     } else {
@@ -386,6 +567,16 @@ function runTurn(playerAction, skillId = null) {
 
     if (state.player.hp <= 0) {
       finishBattle(false);
+      return;
+    }
+
+    tickEndOfRoundDots();
+    if (state.player.hp <= 0) {
+      finishBattle(false);
+      return;
+    }
+    if (state.enemy.hp <= 0) {
+      finishBattle(true);
       return;
     }
 
@@ -427,17 +618,19 @@ function onPlayerDealtDamage() {
   }
 }
 
-function rollD20Crit() {
-  return 18 + Math.floor(Math.random() * 3);
-}
+function executeAttack(attacker, defender, opts) {
+  const { mult, label, attackerSide, applyStatus } = opts;
+  const dice = attackerSide === "player" ? state.playerTurnDice : state.enemyTurnDice;
+  const bonus = diceBonus(dice.d20, dice.d8);
 
-function executeAttack(attacker, defender, { mult, label }) {
-  let baseDamage = Math.round(getEffectiveAttack(attacker) * mult);
+  let baseDamage = Math.round(getEffectiveAttack(attacker) * mult) + bonus;
 
   if (attacker === state.player && attacker.nextDamageMult !== 1) {
     baseDamage = Math.round(baseDamage * attacker.nextDamageMult);
     attacker.nextDamageMult = 1;
   }
+
+  baseDamage = applyColdDamageMod(defender, baseDamage);
 
   let crit = Math.random() < attacker.crit;
   if (attacker === state.player && attacker.guaranteedCrit) {
@@ -463,6 +656,10 @@ function executeAttack(attacker, defender, { mult, label }) {
   defender.hp = Math.max(0, defender.hp - damage);
   defender.guarding = false;
 
+  if (applyStatus && defender.hp > 0) {
+    addStatus(defender, applyStatus.type, applyStatus.turns);
+  }
+
   if (attacker === state.player) {
     onPlayerDealtDamage();
   }
@@ -471,13 +668,13 @@ function executeAttack(attacker, defender, { mult, label }) {
 
   let critText = "";
   if (crit) {
-    const d = rollD20Crit();
-    critText = ` Крит! (как будто d20=${d}).`;
+    critText = ` Крит! (как d20 на столе).`;
   }
   const guardText = defenderGuarding ? " Укрытие снижает урон." : "";
+  const diceText = ` [d20+d8→+${bonus}]`;
   return {
     hit: true,
-    log: `${attacker.name} ${label} и наносит ${damage} урона.${critText}${guardText}`,
+    log: `${attacker.name} ${label} и наносит ${damage} урона.${diceText}${critText}${guardText}`,
   };
 }
 
@@ -497,7 +694,7 @@ function executeHeroSkill(player, enemy, skillId) {
     return { hit: false, log: "Неизвестный приём." };
   }
   if (player.mana < skill.cost) {
-    return { hit: false, log: "Недостаточно магии." };
+    return { hit: false, log: "Недостаточно маны." };
   }
   if ((player.skillCd[skill.id] || 0) > 0) {
     return { hit: false, log: `«${skill.name}» на перезарядке (${player.skillCd[skill.id]} раунд.).` };
@@ -510,7 +707,12 @@ function executeHeroSkill(player, enemy, skillId) {
       if (skill.cooldown) {
         player.skillCd[skill.id] = skill.cooldown;
       }
-      return executeAttack(player, enemy, { mult: skill.mult, label: `творит «${skill.name}»` });
+      return executeAttack(player, enemy, {
+        mult: skill.mult,
+        label: `творит «${skill.name}»`,
+        attackerSide: "player",
+        applyStatus: skill.applyStatus,
+      });
     }
     case "heal": {
       const healed = Math.min(skill.heal, player.maxHp - player.hp);
@@ -531,7 +733,12 @@ function executeHeroSkill(player, enemy, skillId) {
       return { hit: false, log: `${player.name} «${skill.name}»: укрытие и +${healed} HP.` };
     }
     case "damage_heal": {
-      const r = executeAttack(player, enemy, { mult: skill.mult, label: `творит «${skill.name}»` });
+      const r = executeAttack(player, enemy, {
+        mult: skill.mult,
+        label: `творит «${skill.name}»`,
+        attackerSide: "player",
+        applyStatus: skill.applyStatus,
+      });
       const healed = Math.min(skill.heal, player.maxHp - player.hp);
       player.hp += healed;
       syncUI();
@@ -552,7 +759,12 @@ function executeHeroSkill(player, enemy, skillId) {
     }
     case "lifesteal": {
       const before = enemy.hp;
-      const r = executeAttack(player, enemy, { mult: skill.mult, label: `творит «${skill.name}»` });
+      const r = executeAttack(player, enemy, {
+        mult: skill.mult,
+        label: `творит «${skill.name}»`,
+        attackerSide: "player",
+        applyStatus: skill.applyStatus,
+      });
       const dealt = before - enemy.hp;
       const healed = Math.min(Math.floor(dealt * skill.steal), player.maxHp - player.hp);
       player.hp += healed;
@@ -579,13 +791,13 @@ function executeHeroSkill(player, enemy, skillId) {
 function executeBossSkill(enemy, player, skillId) {
   const skill = findSkill(enemy, skillId);
   if (!skill) {
-    return executeAttack(enemy, player, { mult: 1, label: "бьёт" });
+    return executeAttack(enemy, player, { mult: 1, label: "бьёт", attackerSide: "enemy" });
   }
   if (enemy.mana < skill.cost) {
-    return executeAttack(enemy, player, { mult: 1, label: "бьёт" });
+    return executeAttack(enemy, player, { mult: 1, label: "бьёт", attackerSide: "enemy" });
   }
   if ((enemy.skillCd[skill.id] || 0) > 0) {
-    return executeAttack(enemy, player, { mult: 1, label: "бьёт" });
+    return executeAttack(enemy, player, { mult: 1, label: "бьёт", attackerSide: "enemy" });
   }
 
   enemy.mana -= skill.cost;
@@ -594,7 +806,12 @@ function executeBossSkill(enemy, player, skillId) {
   }
 
   if (skill.heal) {
-    const r = executeAttack(enemy, player, { mult: skill.mult, label: `творит «${skill.name}»` });
+    const r = executeAttack(enemy, player, {
+      mult: skill.mult,
+      label: `творит «${skill.name}»`,
+      attackerSide: "enemy",
+      applyStatus: skill.applyStatus,
+    });
     const healed = Math.min(skill.heal, enemy.maxHp - enemy.hp);
     enemy.hp += healed;
     syncUI();
@@ -604,7 +821,12 @@ function executeBossSkill(enemy, player, skillId) {
     };
   }
 
-  return executeAttack(enemy, player, { mult: skill.mult, label: `творит «${skill.name}»` });
+  return executeAttack(enemy, player, {
+    mult: skill.mult,
+    label: `творит «${skill.name}»`,
+    attackerSide: "enemy",
+    applyStatus: skill.applyStatus,
+  });
 }
 
 function chooseEnemyAction() {
@@ -682,15 +904,21 @@ function syncUI() {
   applySigil(el.playerAvatar, state.player);
   el.playerHpText.textContent = `HP: ${state.player.hp}/${state.player.maxHp}`;
   el.playerHpBar.style.width = `${(state.player.hp / state.player.maxHp) * 100}%`;
-  el.playerManaText.textContent = `Магия: ${state.player.mana}/${state.player.maxMana}`;
+  el.playerManaText.textContent = `Мана: ${state.player.mana}/${state.player.maxMana}`;
   el.playerManaBar.style.width = `${(state.player.mana / state.player.maxMana) * 100}%`;
+  if (el.playerEffects) {
+    el.playerEffects.innerHTML = effectStripHtml(state.player);
+  }
 
   el.enemyName.textContent = state.enemy.name;
   applySigil(el.enemyAvatar, state.enemy);
   el.enemyHpText.textContent = `HP: ${state.enemy.hp}/${state.enemy.maxHp}`;
   el.enemyHpBar.style.width = `${(state.enemy.hp / state.enemy.maxHp) * 100}%`;
-  el.enemyManaText.textContent = `Магия: ${state.enemy.mana}/${state.enemy.maxMana}`;
+  el.enemyManaText.textContent = `Мана: ${state.enemy.mana}/${state.enemy.maxMana}`;
   el.enemyManaBar.style.width = `${(state.enemy.mana / state.enemy.maxMana) * 100}%`;
+  if (el.enemyEffects) {
+    el.enemyEffects.innerHTML = effectStripHtml(state.enemy);
+  }
 
   el.round.textContent = String(state.round);
   el.combo.textContent = String(state.combo);
