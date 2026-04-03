@@ -1,8 +1,19 @@
+/**
+ * Бой в духе D&D 5e (упрощ.): бросок d20 + бонус против КД; урон — кости d8 + модификатор.
+ * Преимущество к типу атаки: +2 к броску атаки (как упрощённое преимущество).
+ */
+
 const EFFECT_TYPES = {
   fire: { label: "Огонь", dot: 5 },
   poison: { label: "Яд", dot: 4 },
   bleed: { label: "Кровотечение", dot: 3 },
   cold: { label: "Мороз", dot: 0, reduceNextDamage: 0.82 },
+};
+
+const CLASS_RULES = {
+  fighter: { name: "Воин", advantageOn: ["weapon"] },
+  cleric: { name: "Жрец", advantageOn: ["spell"] },
+  ranger: { name: "Следопыт", advantageOn: ["weapon"] },
 };
 
 const SCENARIO_POPUPS = [
@@ -22,55 +33,61 @@ const heroes = [
   {
     id: "solaris",
     name: "Соларис Нёбесный",
+    classId: "cleric",
     sigil: "S",
     sigilColor: "#c9a227",
+    ac: 16,
+    profBonus: 3,
+    abilityMod: { weapon: 2, spell: 5 },
     maxHp: 168,
-    attack: 17,
-    crit: 0.2,
     maxMana: 100,
     manaRegen: 14,
     skills: [
-      { id: "sol_1", name: "Священное пламя", cost: 18, kind: "damage", mult: 1.45, applyStatus: { type: "fire", turns: 2 } },
-      { id: "sol_2", name: "Направляющий луч", cost: 32, kind: "damage", mult: 2.0 },
-      { id: "sol_3", name: "Благословение удара", cost: 22, kind: "buff_next", nextMult: 1.5 },
+      { id: "sol_1", name: "Священное пламя", cost: 18, kind: "damage", attackType: "spell", diceCount: 2, applyStatus: { type: "fire", turns: 2 } },
+      { id: "sol_2", name: "Направляющий луч", cost: 32, kind: "damage", attackType: "spell", diceCount: 3 },
+      { id: "sol_3", name: "Благословение удара", cost: 22, kind: "buff_next", nextMult: 1.45 },
       { id: "sol_4", name: "Лечение ран", cost: 25, kind: "heal", heal: 32 },
-      { id: "sol_5", name: "Пламя небес", cost: 48, kind: "damage", mult: 2.55, cooldown: 2, applyStatus: { type: "fire", turns: 3 } },
+      { id: "sol_5", name: "Пламя небес", cost: 48, kind: "damage", attackType: "spell", diceCount: 4, cooldown: 2, applyStatus: { type: "fire", turns: 3 } },
     ],
   },
   {
     id: "torgun",
     name: "Торгун Каменный",
+    classId: "fighter",
     sigil: "T",
     sigilColor: "#5c7a9e",
+    ac: 18,
+    profBonus: 3,
+    abilityMod: { weapon: 5, spell: 1 },
     maxHp: 205,
-    attack: 14,
-    crit: 0.11,
     maxMana: 90,
     manaRegen: 12,
     skills: [
-      { id: "tor_1", name: "Таран", cost: 12, kind: "damage", mult: 1.35 },
+      { id: "tor_1", name: "Таран", cost: 12, kind: "damage", attackType: "weapon", diceCount: 2 },
       { id: "tor_2", name: "Стойка щитоносца", cost: 18, kind: "guard_heal", heal: 22 },
-      { id: "tor_3", name: "Удар щитом", cost: 28, kind: "damage_heal", mult: 1.55, heal: 12 },
+      { id: "tor_3", name: "Удар щитом", cost: 28, kind: "damage_heal", attackType: "weapon", diceCount: 2, heal: 12 },
       { id: "tor_4", name: "Сбить почву", cost: 20, kind: "debuff_enemy", weakMult: 0.62 },
-      { id: "tor_5", name: "Сокрушитель", cost: 42, kind: "damage", mult: 2.15, cooldown: 1, applyStatus: { type: "bleed", turns: 2 } },
+      { id: "tor_5", name: "Сокрушитель", cost: 42, kind: "damage", attackType: "weapon", diceCount: 3, cooldown: 1, applyStatus: { type: "bleed", turns: 2 } },
     ],
   },
   {
     id: "keris",
     name: "Кэрис Ночная",
+    classId: "ranger",
     sigil: "K",
     sigilColor: "#8b3a5c",
+    ac: 15,
+    profBonus: 3,
+    abilityMod: { weapon: 5, spell: 2 },
     maxHp: 145,
-    attack: 21,
-    crit: 0.28,
     maxMana: 110,
     manaRegen: 13,
     skills: [
-      { id: "ker_1", name: "Быстрый выпад", cost: 15, kind: "damage", mult: 1.45, applyStatus: { type: "poison", turns: 2 } },
+      { id: "ker_1", name: "Быстрый выпад", cost: 15, kind: "damage", attackType: "weapon", diceCount: 2, applyStatus: { type: "poison", turns: 2 } },
       { id: "ker_2", name: "Метка охотника", cost: 26, kind: "mark_crit" },
-      { id: "ker_3", name: "Удар вампира", cost: 30, kind: "lifesteal", mult: 1.75, steal: 0.38 },
+      { id: "ker_3", name: "Удар вампира", cost: 30, kind: "lifesteal", attackType: "weapon", diceCount: 3, steal: 0.38 },
       { id: "ker_4", name: "Ярость охотника", cost: 18, kind: "rage", rageTurns: 2 },
-      { id: "ker_5", name: "Казнь тени", cost: 55, kind: "damage", mult: 2.55, cooldown: 2, applyStatus: { type: "bleed", turns: 3 } },
+      { id: "ker_5", name: "Казнь тени", cost: 55, kind: "damage", attackType: "weapon", diceCount: 4, cooldown: 2, applyStatus: { type: "bleed", turns: 3 } },
     ],
   },
 ];
@@ -81,16 +98,18 @@ const bosses = [
     name: "Тень из Ксарта",
     sigil: "X",
     sigilColor: "#4a4a6a",
+    ac: 15,
+    profBonus: 3,
+    abilityMod: { weapon: 4, spell: 5 },
+    advantageOn: ["spell"],
     maxHp: 218,
-    attack: 15,
-    crit: 0.18,
     maxMana: 95,
     manaRegen: 12,
     skills: [
-      { id: "bx1", name: "Хватка сумерек", cost: 14, mult: 1.45, applyStatus: { type: "cold", turns: 1 } },
-      { id: "bx2", name: "Волна тьмы", cost: 28, mult: 1.85 },
-      { id: "bx3", name: "Пожирание жизни", cost: 22, mult: 1.3, heal: 16 },
-      { id: "bx4", name: "Кошмарный вид", cost: 38, mult: 2.1, cooldown: 1, applyStatus: { type: "poison", turns: 2 } },
+      { id: "bx1", name: "Хватка сумерек", cost: 14, attackType: "spell", diceCount: 2, applyStatus: { type: "cold", turns: 1 } },
+      { id: "bx2", name: "Волна тьмы", cost: 28, attackType: "spell", diceCount: 3 },
+      { id: "bx3", name: "Пожирание жизни", cost: 22, attackType: "spell", diceCount: 2, heal: 16 },
+      { id: "bx4", name: "Кошмарный вид", cost: 38, attackType: "spell", diceCount: 3, cooldown: 1, applyStatus: { type: "poison", turns: 2 } },
     ],
   },
   {
@@ -98,16 +117,18 @@ const bosses = [
     name: "Мордвин Ледяной",
     sigil: "M",
     sigilColor: "#5a8aaa",
+    ac: 16,
+    profBonus: 3,
+    abilityMod: { weapon: 3, spell: 5 },
+    advantageOn: ["spell"],
     maxHp: 200,
-    attack: 16,
-    crit: 0.16,
     maxMana: 100,
     manaRegen: 13,
     skills: [
-      { id: "bm1", name: "Ледяной шип", cost: 13, mult: 1.4, applyStatus: { type: "cold", turns: 1 } },
-      { id: "bm2", name: "Морозная волна", cost: 26, mult: 1.8 },
-      { id: "bm3", name: "Град стрел", cost: 32, mult: 1.95 },
-      { id: "bm4", name: "Ледяная могила", cost: 44, mult: 2.35, cooldown: 2, applyStatus: { type: "cold", turns: 2 } },
+      { id: "bm1", name: "Ледяной шип", cost: 13, attackType: "spell", diceCount: 2, applyStatus: { type: "cold", turns: 1 } },
+      { id: "bm2", name: "Морозная волна", cost: 26, attackType: "spell", diceCount: 3 },
+      { id: "bm3", name: "Град стрел", cost: 32, attackType: "spell", diceCount: 3 },
+      { id: "bm4", name: "Ледяная могила", cost: 44, attackType: "spell", diceCount: 4, cooldown: 2, applyStatus: { type: "cold", turns: 2 } },
     ],
   },
   {
@@ -115,16 +136,18 @@ const bosses = [
     name: "Курн Железнорожный",
     sigil: "G",
     sigilColor: "#7a7a82",
+    ac: 17,
+    profBonus: 3,
+    abilityMod: { weapon: 6, spell: 2 },
+    advantageOn: ["weapon"],
     maxHp: 238,
-    attack: 13,
-    crit: 0.12,
     maxMana: 85,
     manaRegen: 11,
     skills: [
-      { id: "bk1", name: "Каменный кулак", cost: 12, mult: 1.35 },
-      { id: "bk2", name: "Обвал", cost: 24, mult: 1.7 },
-      { id: "bk3", name: "Слить камень", cost: 20, mult: 1.2, heal: 22 },
-      { id: "bk4", name: "Перегрев ядра", cost: 40, mult: 2.15, cooldown: 1, applyStatus: { type: "fire", turns: 2 } },
+      { id: "bk1", name: "Каменный кулак", cost: 12, attackType: "weapon", diceCount: 2 },
+      { id: "bk2", name: "Обвал", cost: 24, attackType: "weapon", diceCount: 3 },
+      { id: "bk3", name: "Слить камень", cost: 20, attackType: "weapon", diceCount: 2, heal: 22 },
+      { id: "bk4", name: "Перегрев ядра", cost: 40, attackType: "weapon", diceCount: 3, cooldown: 1, applyStatus: { type: "fire", turns: 2 } },
     ],
   },
   {
@@ -132,16 +155,18 @@ const bosses = [
     name: "Лорен Изумрудная",
     sigil: "V",
     sigilColor: "#8b1538",
+    ac: 15,
+    profBonus: 3,
+    abilityMod: { weapon: 5, spell: 3 },
+    advantageOn: ["weapon"],
     maxHp: 188,
-    attack: 18,
-    crit: 0.24,
     maxMana: 105,
     manaRegen: 14,
     skills: [
-      { id: "bl1", name: "Бич крови", cost: 15, mult: 1.45, applyStatus: { type: "bleed", turns: 2 } },
-      { id: "bl2", name: "Пир клинков", cost: 29, mult: 1.9 },
-      { id: "bl3", name: "Укус", cost: 24, mult: 1.65, heal: 18, applyStatus: { type: "poison", turns: 1 } },
-      { id: "bl4", name: "Кровавый обет", cost: 46, mult: 2.35, cooldown: 2, applyStatus: { type: "bleed", turns: 3 } },
+      { id: "bl1", name: "Бич крови", cost: 15, attackType: "weapon", diceCount: 2, applyStatus: { type: "bleed", turns: 2 } },
+      { id: "bl2", name: "Пир клинков", cost: 29, attackType: "weapon", diceCount: 3 },
+      { id: "bl3", name: "Укус", cost: 24, attackType: "weapon", diceCount: 2, heal: 18, applyStatus: { type: "poison", turns: 1 } },
+      { id: "bl4", name: "Кровавый обет", cost: 46, attackType: "weapon", diceCount: 4, cooldown: 2, applyStatus: { type: "bleed", turns: 3 } },
     ],
   },
   {
@@ -149,16 +174,18 @@ const bosses = [
     name: "Архимаг Ворн",
     sigil: "A",
     sigilColor: "#6b4c9c",
+    ac: 14,
+    profBonus: 3,
+    abilityMod: { weapon: 3, spell: 6 },
+    advantageOn: ["spell"],
     maxHp: 208,
-    attack: 16,
-    crit: 0.2,
     maxMana: 110,
     manaRegen: 15,
     skills: [
-      { id: "bz1", name: "Снаряд силы", cost: 14, mult: 1.45, applyStatus: { type: "fire", turns: 1 } },
-      { id: "bz2", name: "Проклятие", cost: 27, mult: 1.85, applyStatus: { type: "poison", turns: 2 } },
-      { id: "bz3", name: "Жертва силы", cost: 18, mult: 1.25, heal: 20 },
-      { id: "bz4", name: "Метеор Ворна", cost: 48, mult: 2.35, cooldown: 2, applyStatus: { type: "fire", turns: 2 } },
+      { id: "bz1", name: "Снаряд силы", cost: 14, attackType: "spell", diceCount: 2, applyStatus: { type: "fire", turns: 1 } },
+      { id: "bz2", name: "Проклятие", cost: 27, attackType: "spell", diceCount: 3, applyStatus: { type: "poison", turns: 2 } },
+      { id: "bz3", name: "Жертва силы", cost: 18, attackType: "spell", diceCount: 2, heal: 20 },
+      { id: "bz4", name: "Метеор Ворна", cost: 48, attackType: "spell", diceCount: 4, cooldown: 2, applyStatus: { type: "fire", turns: 2 } },
     ],
   },
 ];
@@ -179,8 +206,8 @@ const state = {
   wins: 0,
   busy: false,
   finished: false,
-  playerTurnDice: { d20: 0, d8: 0 },
-  enemyTurnDice: { d20: 0, d8: 0 },
+  playerTurnDisplay: { attackLine: "", damageLine: "" },
+  enemyTurnDisplay: { attackLine: "", damageLine: "" },
 };
 
 const el = {
@@ -212,12 +239,10 @@ const el = {
   restartBtn: document.querySelector("#restart-btn"),
   skillBar: document.querySelector("#skill-bar"),
   baseActions: [...document.querySelectorAll(".action-btn[data-action]")],
-  dicePD20: document.querySelector("#dice-p-d20"),
-  dicePD8: document.querySelector("#dice-p-d8"),
-  dicePBonus: document.querySelector("#dice-p-bonus"),
-  diceED20: document.querySelector("#dice-e-d20"),
-  diceED8: document.querySelector("#dice-e-d8"),
-  diceEBonus: document.querySelector("#dice-e-bonus"),
+  dicePAttack: document.querySelector("#dice-p-attack"),
+  dicePDamage: document.querySelector("#dice-p-damage"),
+  diceEAttack: document.querySelector("#dice-e-attack"),
+  diceEDamage: document.querySelector("#dice-e-damage"),
   toastRoot: document.querySelector("#toast-root"),
 };
 
@@ -232,8 +257,12 @@ function rollD8() {
   return 1 + Math.floor(Math.random() * 8);
 }
 
-function diceBonus(d20, d8) {
-  return Math.max(0, Math.floor((d20 + d8) / 4) - 2);
+function rollNd8(n) {
+  const rolls = [];
+  for (let i = 0; i < n; i++) {
+    rolls.push(rollD8());
+  }
+  return { rolls, sum: rolls.reduce((a, b) => a + b, 0) };
 }
 
 function pickRandomBoss() {
@@ -273,9 +302,211 @@ function applySigil(domEl, fighter) {
   domEl.style.setProperty("--sigil-bg", fighter.sigilColor);
 }
 
+function hasAdvantage(attacker, attackType) {
+  if (attacker.classId && CLASS_RULES[attacker.classId]) {
+    return CLASS_RULES[attacker.classId].advantageOn.includes(attackType);
+  }
+  if (attacker.advantageOn) {
+    return attacker.advantageOn.includes(attackType);
+  }
+  return false;
+}
+
+function attackBonusTotal(attacker, attackType) {
+  const prof = attacker.profBonus ?? 3;
+  const mod = attacker.abilityMod?.[attackType] ?? 2;
+  const adv = hasAdvantage(attacker, attackType) ? 2 : 0;
+  return { prof, mod, adv, total: prof + mod + adv };
+}
+
+function resolveAttackRoll(attacker, defender, attackType) {
+  const d20 = rollD20();
+  const { prof, mod, adv, total: bonus } = attackBonusTotal(attacker, attackType);
+  const total = d20 + bonus;
+  const ac = defender.ac;
+
+  if (d20 === 1) {
+    return { d20, bonus, total, ac, hit: false, isCrit: false, isFumble: true, adv };
+  }
+  if (d20 === 20) {
+    return { d20, bonus, total, ac, hit: true, isCrit: true, isFumble: false, adv };
+  }
+  const hit = total >= ac;
+  return { d20, bonus, total, ac, hit, isCrit: false, isFumble: false, adv };
+}
+
+function formatAttackLine(sideLabel, ar, defenderName) {
+  if (!ar) {
+    return `${sideLabel}: —`;
+  }
+  const advText = ar.adv ? " преим." : "";
+  if (ar.isFumble) {
+    return `${sideLabel}: d20=${ar.d20} — автоматический промах.`;
+  }
+  if (ar.isCrit) {
+    return `${sideLabel}: d20=${ar.d20} + ${ar.bonus}${advText} = ${ar.total} vs КД ${ar.ac} (${defenderName}) — критическое попадание!`;
+  }
+  if (ar.hit) {
+    return `${sideLabel}: d20=${ar.d20} + ${ar.bonus}${advText} = ${ar.total} vs КД ${ar.ac} — попадание.`;
+  }
+  return `${sideLabel}: d20=${ar.d20} + ${ar.bonus}${advText} = ${ar.total} vs КД ${ar.ac} — мимо.`;
+}
+
+function getDamageMod(attacker, attackType) {
+  let m = attacker.abilityMod?.[attackType] ?? 2;
+  if (attacker === state.player && attacker.rageTurns > 0 && attackType === "weapon") {
+    m += 2;
+  }
+  return m;
+}
+
+function resolveDamageStrike(attacker, defender, opts) {
+  const { attackType, diceCount, applyStatus, label, ar } = opts;
+  let crit = ar.isCrit;
+  if (attacker === state.player && attacker.guaranteedCrit) {
+    crit = true;
+    attacker.guaranteedCrit = false;
+  }
+
+  const mod = getDamageMod(attacker, attackType);
+  const nDice = crit ? diceCount * 2 : diceCount;
+  const { rolls, sum } = rollNd8(nDice);
+  let damage = sum + mod;
+
+  if (attacker === state.player && attacker.nextDamageMult !== 1) {
+    damage = Math.round(damage * attacker.nextDamageMult);
+    attacker.nextDamageMult = 1;
+  }
+
+  damage = applyColdDamageMod(defender, damage);
+
+  if (defender.guarding) {
+    damage = Math.round(damage * 0.5);
+  }
+
+  if (attacker === state.enemy && attacker.attackWeakNext) {
+    damage = Math.round(damage * 0.62);
+    attacker.attackWeakNext = false;
+  }
+
+  const spread = Math.floor(Math.random() * 3);
+  damage = Math.max(1, damage + spread - 1);
+
+  defender.hp = Math.max(0, defender.hp - damage);
+  defender.guarding = false;
+
+  if (applyStatus && defender.hp > 0) {
+    addStatus(defender, applyStatus.type, applyStatus.turns);
+  }
+
+  if (attacker === state.player) {
+    onPlayerDealtDamage();
+  }
+
+  syncUI();
+
+  const rollsStr = rolls.join("+");
+  const critTag = crit ? " Крит — удвоены кости d8." : "";
+  const guardNote = opts.wasGuarding ? " Укрытие: половина урона." : "";
+
+  const dmgLine = `${diceCount}d8${crit ? `→${nDice}d8` : ""}: [${rollsStr}] + ${mod} = ${damage}${critTag}`;
+
+  return {
+    hit: true,
+    log: `${attacker.name} ${label}: попадание — ${damage} урона. (${dmgLine})${guardNote}`,
+    damageLine: dmgLine,
+  };
+}
+
+function executeWeaponAttack(attacker, defender, opts) {
+  const attackType = "weapon";
+  const ar = resolveAttackRoll(attacker, defender, attackType);
+  state[opts.displayKey || "playerTurnDisplay"].attackLine = formatAttackLine("Атака", ar, defender.name);
+  state[opts.displayKey || "playerTurnDisplay"].damageLine = ar.hit ? "…" : "Урон: —";
+
+  if (!ar.hit) {
+    syncUI();
+    updateDicePanel();
+    return {
+      hit: false,
+      log: `${attacker.name} ${opts.label}: ${formatAttackLog(ar, defender.name)}`,
+    };
+  }
+
+  const diceCount = opts.diceCount ?? 1;
+  const r = resolveDamageStrike(attacker, defender, {
+    attackType,
+    diceCount,
+    applyStatus: opts.applyStatus,
+    label: opts.label,
+    ar,
+    wasGuarding: defender.guarding,
+  });
+  state[opts.displayKey || "playerTurnDisplay"].damageLine = `Урон (d8): ${r.damageLine}`;
+  updateDicePanel();
+  return { hit: true, log: r.log };
+}
+
+function formatAttackLog(ar, defenderName) {
+  if (ar.isFumble) {
+    return `промах (1 на d20).`;
+  }
+  if (!ar.hit) {
+    return `мимо (${ar.total} vs КД ${ar.ac} ${defenderName}).`;
+  }
+  return ``;
+}
+
+function executeStrike(attacker, defender, opts) {
+  const { attackType, diceCount, applyStatus, label, displayKey } = opts;
+  const ar = resolveAttackRoll(attacker, defender, attackType);
+  const dk = displayKey || "playerTurnDisplay";
+  state[dk].attackLine = formatAttackLine("Атака", ar, defender.name);
+  state[dk].damageLine = ar.hit ? "…" : "Урон: —";
+
+  if (!ar.hit) {
+    syncUI();
+    updateDicePanel();
+    return {
+      hit: false,
+      log: `${attacker.name} ${label}: ${ar.isFumble ? "промах (1 на d20)." : `мимо (${ar.total} vs КД ${ar.ac}).`}`,
+    };
+  }
+
+  const r = resolveDamageStrike(attacker, defender, {
+    attackType,
+    diceCount,
+    applyStatus,
+    label,
+    ar,
+    wasGuarding: defender.guarding,
+  });
+  state[dk].damageLine = `Урон (d8): ${r.damageLine}`;
+  updateDicePanel();
+
+  return { hit: true, log: r.log };
+}
+
+function updateDicePanel() {
+  if (el.dicePAttack) {
+    el.dicePAttack.textContent = state.playerTurnDisplay.attackLine || "Атака: —";
+  }
+  if (el.dicePDamage) {
+    el.dicePDamage.textContent = state.playerTurnDisplay.damageLine || "Урон (d8): —";
+  }
+  if (el.diceEAttack) {
+    el.diceEAttack.textContent = state.enemyTurnDisplay.attackLine || "Атака: —";
+  }
+  if (el.diceEDamage) {
+    el.diceEDamage.textContent = state.enemyTurnDisplay.damageLine || "Урон (d8): —";
+  }
+}
+
 function cloneFighter(template, isPlayer) {
+  const cls = template.classId ? CLASS_RULES[template.classId] : null;
   const f = {
     ...template,
+    className: cls?.name ?? template.className ?? "Враг",
     hp: template.maxHp,
     mana: Math.min(template.maxMana, Math.floor(template.maxMana * 0.55)),
     guarding: false,
@@ -359,13 +590,15 @@ function applyColdDamageMod(defender, baseDamage) {
 function renderHeroPicker() {
   el.heroGrid.innerHTML = "";
   heroes.forEach((hero) => {
+    const c = CLASS_RULES[hero.classId];
     const button = document.createElement("button");
     button.className = "hero-btn";
     button.innerHTML = `
       <div class="hero-sigil" style="--sigil-bg:${hero.sigilColor}">${hero.sigil}</div>
       <div>
         <span class="hero-name">${hero.name}</span>
-        <span class="hero-stats">HP ${hero.maxHp} · Мана ${hero.maxMana} · Сила ${hero.attack} · Крит ${(hero.crit * 100).toFixed(0)}%</span>
+        <span class="hero-class">${c.name}</span>
+        <span class="hero-stats">КД ${hero.ac} · HP ${hero.maxHp} · Мана ${hero.maxMana}</span>
       </div>
     `;
     button.addEventListener("click", () => startBattle(hero));
@@ -391,8 +624,12 @@ function renderSkillBar() {
 }
 
 function skillTip(s) {
+  const atk = s.attackType === "spell" ? "заклинание" : "оружие";
   if (s.kind === "damage") {
-    let t = `${s.name}: урон ×${s.mult}${s.cooldown ? `, перезарядка ${s.cooldown} раунда` : ""}`;
+    let t = `${s.name}: бросок атаки (${atk}) vs КД, ${s.diceCount}d8 + мод`;
+    if (s.cooldown) {
+      t += `, перезарядка ${s.cooldown}`;
+    }
     if (s.applyStatus) {
       t += ` · ${EFFECT_TYPES[s.applyStatus.type]?.label || ""}`;
     }
@@ -402,58 +639,27 @@ function skillTip(s) {
     return `${s.name}: +${s.heal} HP`;
   }
   if (s.kind === "buff_next") {
-    return `${s.name}: следующий урон +${Math.round((s.nextMult - 1) * 100)}%`;
+    return `${s.name}: следующий урон ×${s.nextMult}`;
   }
   if (s.kind === "guard_heal") {
     return `${s.name}: укрытие и +${s.heal} HP`;
   }
   if (s.kind === "damage_heal") {
-    return `${s.name}: урон ×${s.mult}, лечение +${s.heal}`;
+    return `${s.name}: ${s.diceCount}d8 + мод, лечение +${s.heal}`;
   }
   if (s.kind === "debuff_enemy") {
     return `${s.name}: следующий удар врага слабее`;
   }
   if (s.kind === "mark_crit") {
-    return `${s.name}: следующий удар — критический`;
+    return `${s.name}: следующий удар — удвоение d8 (крит по урону)`;
   }
   if (s.kind === "lifesteal") {
-    return `${s.name}: урон ×${s.mult}, поглощение ${Math.round(s.steal * 100)}%`;
+    return `${s.name}: ${s.diceCount}d8, вампиризм ${Math.round(s.steal * 100)}%`;
   }
   if (s.kind === "rage") {
-    return `${s.name}: +20% к силе на ${s.rageTurns} удара`;
+    return `${s.name}: +2 к урону оружием на ${s.rageTurns} удара`;
   }
   return s.name;
-}
-
-function updateDiceUI(whichSide) {
-  if (whichSide === "player" || whichSide === "both") {
-    const d = state.playerTurnDice;
-    const has = d.d20 > 0;
-    const b = has ? diceBonus(d.d20, d.d8) : 0;
-    if (el.dicePD20) {
-      el.dicePD20.textContent = has ? String(d.d20) : "—";
-    }
-    if (el.dicePD8) {
-      el.dicePD8.textContent = has ? String(d.d8) : "—";
-    }
-    if (el.dicePBonus) {
-      el.dicePBonus.textContent = has ? `бонус к урону: +${b}` : "бонус к урону: —";
-    }
-  }
-  if (whichSide === "enemy" || whichSide === "both") {
-    const d = state.enemyTurnDice;
-    const has = d.d20 > 0;
-    const b = has ? diceBonus(d.d20, d.d8) : 0;
-    if (el.diceED20) {
-      el.diceED20.textContent = has ? String(d.d20) : "—";
-    }
-    if (el.diceED8) {
-      el.diceED8.textContent = has ? String(d.d8) : "—";
-    }
-    if (el.diceEBonus) {
-      el.diceEBonus.textContent = has ? `бонус: +${b}` : "бонус: —";
-    }
-  }
 }
 
 function startBattle(heroTemplate) {
@@ -464,8 +670,8 @@ function startBattle(heroTemplate) {
   state.combo = 0;
   state.finished = false;
   state.busy = false;
-  state.playerTurnDice = { d20: 0, d8: 0 };
-  state.enemyTurnDice = { d20: 0, d8: 0 };
+  state.playerTurnDisplay = { attackLine: "Атака: —", damageLine: "Урон (d8): —" };
+  state.enemyTurnDisplay = { attackLine: "Атака: —", damageLine: "Урон (d8): —" };
   el.heroPicker.classList.add("hidden");
   el.battle.classList.remove("hidden");
   el.restartBtn.classList.add("hidden");
@@ -473,8 +679,8 @@ function startBattle(heroTemplate) {
   toggleActions(false);
   resetLog();
   appendLog(randomFlavor());
-  appendLog(`Столкновение: ${state.player.name} против ${state.enemy.name}.`);
-  updateDiceUI("both");
+  appendLog(`Столкновение: ${state.player.name} (${state.player.className}) против ${state.enemy.name} (КД ${state.enemy.ac}).`);
+  updateDicePanel();
   syncUI();
 }
 
@@ -500,9 +706,7 @@ function runTurn(playerAction, skillId = null) {
     return;
   }
 
-  state.playerTurnDice = { d20: rollD20(), d8: rollD8() };
-  appendLog(`Ваш бросок: d20=${state.playerTurnDice.d20}, d8=${state.playerTurnDice.d8} (бонус +${diceBonus(state.playerTurnDice.d20, state.playerTurnDice.d8)}).`);
-  updateDiceUI("player");
+  state.playerTurnDisplay = { attackLine: "", damageLine: "" };
   maybeRandomScenarioPopup();
 
   state.busy = true;
@@ -512,9 +716,16 @@ function runTurn(playerAction, skillId = null) {
   let playerResult;
 
   if (playerAction === "attack") {
-    playerResult = executeAttack(state.player, state.enemy, { mult: 1, label: "бьёт", attackerSide: "player" });
+    playerResult = executeWeaponAttack(state.player, state.enemy, {
+      label: "бьёт",
+      diceCount: 1,
+      displayKey: "playerTurnDisplay",
+    });
   } else if (playerAction === "guard") {
     playerResult = executeGuard(state.player);
+    state.playerTurnDisplay.attackLine = "Укрытие — броска атаки нет.";
+    state.playerTurnDisplay.damageLine = "Урон: —";
+    updateDicePanel();
   } else if (playerAction === "skill") {
     playerResult = executeHeroSkill(state.player, state.enemy, skillId);
   } else {
@@ -538,9 +749,7 @@ function runTurn(playerAction, skillId = null) {
   }
 
   setTimeout(() => {
-    state.enemyTurnDice = { d20: rollD20(), d8: rollD8() };
-    appendLog(`Бросок врага: d20=${state.enemyTurnDice.d20}, d8=${state.enemyTurnDice.d8} (бонус +${diceBonus(state.enemyTurnDice.d20, state.enemyTurnDice.d8)}).`);
-    updateDiceUI("enemy");
+    state.enemyTurnDisplay = { attackLine: "", damageLine: "" };
     if (Math.random() < 0.28) {
       showToast(SCENARIO_POPUPS[Math.floor(Math.random() * SCENARIO_POPUPS.length)]);
     }
@@ -549,9 +758,16 @@ function runTurn(playerAction, skillId = null) {
     state.enemy.guarding = enemyMove.type === "guard";
     let enemyResult;
     if (enemyMove.type === "attack") {
-      enemyResult = executeAttack(state.enemy, state.player, { mult: 1, label: "бьёт", attackerSide: "enemy" });
+      enemyResult = executeWeaponAttack(state.enemy, state.player, {
+        label: "бьёт",
+        diceCount: 1,
+        displayKey: "enemyTurnDisplay",
+      });
     } else if (enemyMove.type === "guard") {
       enemyResult = executeGuard(state.enemy);
+      state.enemyTurnDisplay.attackLine = "Укрытие — броска атаки нет.";
+      state.enemyTurnDisplay.damageLine = "Урон: —";
+      updateDicePanel();
     } else {
       enemyResult = executeBossSkill(state.enemy, state.player, enemyMove.skillId);
     }
@@ -604,84 +820,16 @@ function tickCooldowns(fighter) {
   });
 }
 
-function getEffectiveAttack(attacker) {
-  let atk = attacker.attack;
-  if (attacker.rageTurns > 0) {
-    atk *= 1.2;
-  }
-  return atk;
-}
-
 function onPlayerDealtDamage() {
   if (state.player.rageTurns > 0) {
     state.player.rageTurns -= 1;
   }
 }
 
-function executeAttack(attacker, defender, opts) {
-  const { mult, label, attackerSide, applyStatus } = opts;
-  const dice = attackerSide === "player" ? state.playerTurnDice : state.enemyTurnDice;
-  const bonus = diceBonus(dice.d20, dice.d8);
-
-  let baseDamage = Math.round(getEffectiveAttack(attacker) * mult) + bonus;
-
-  if (attacker === state.player && attacker.nextDamageMult !== 1) {
-    baseDamage = Math.round(baseDamage * attacker.nextDamageMult);
-    attacker.nextDamageMult = 1;
-  }
-
-  baseDamage = applyColdDamageMod(defender, baseDamage);
-
-  let crit = Math.random() < attacker.crit;
-  if (attacker === state.player && attacker.guaranteedCrit) {
-    crit = true;
-    attacker.guaranteedCrit = false;
-  }
-  if (crit) {
-    baseDamage = Math.round(baseDamage * 1.5);
-  }
-
-  let defenderGuarding = defender.guarding;
-  if (defenderGuarding) {
-    baseDamage = Math.round(baseDamage * 0.5);
-  }
-
-  if (attacker === state.enemy && attacker.attackWeakNext) {
-    baseDamage = Math.round(baseDamage * 0.62);
-    attacker.attackWeakNext = false;
-  }
-
-  const randomSpread = Math.floor(Math.random() * 4);
-  const damage = Math.max(1, baseDamage - 2 + randomSpread);
-  defender.hp = Math.max(0, defender.hp - damage);
-  defender.guarding = false;
-
-  if (applyStatus && defender.hp > 0) {
-    addStatus(defender, applyStatus.type, applyStatus.turns);
-  }
-
-  if (attacker === state.player) {
-    onPlayerDealtDamage();
-  }
-
-  syncUI();
-
-  let critText = "";
-  if (crit) {
-    critText = ` Крит! (как d20 на столе).`;
-  }
-  const guardText = defenderGuarding ? " Укрытие снижает урон." : "";
-  const diceText = ` [d20+d8→+${bonus}]`;
-  return {
-    hit: true,
-    log: `${attacker.name} ${label} и наносит ${damage} урона.${diceText}${critText}${guardText}`,
-  };
-}
-
 function executeGuard(attacker) {
   attacker.guarding = true;
   syncUI();
-  return { hit: false, log: `${attacker.name} занимает оборону и готовится к удару.` };
+  return { hit: false, log: `${attacker.name} занимает укрытие: при попадании урон уменьшается вдвое.` };
 }
 
 function findSkill(fighter, skillId) {
@@ -707,79 +855,103 @@ function executeHeroSkill(player, enemy, skillId) {
       if (skill.cooldown) {
         player.skillCd[skill.id] = skill.cooldown;
       }
-      return executeAttack(player, enemy, {
-        mult: skill.mult,
-        label: `творит «${skill.name}»`,
-        attackerSide: "player",
+      return executeStrike(player, enemy, {
+        attackType: skill.attackType || "spell",
+        diceCount: skill.diceCount,
         applyStatus: skill.applyStatus,
+        label: `«${skill.name}»`,
+        displayKey: "playerTurnDisplay",
       });
     }
     case "heal": {
       const healed = Math.min(skill.heal, player.maxHp - player.hp);
       player.hp += healed;
       syncUI();
+      state.playerTurnDisplay.attackLine = "Лечение — без броска атаки.";
+      state.playerTurnDisplay.damageLine = `+${healed} HP`;
+      updateDicePanel();
       return { hit: false, log: `${player.name} творит «${skill.name}» и восстанавливает ${healed} HP.` };
     }
     case "buff_next": {
       player.nextDamageMult = skill.nextMult;
       syncUI();
-      return { hit: false, log: `${player.name}: «${skill.name}» — следующий удар будет сильнее.` };
+      state.playerTurnDisplay.attackLine = "Бафф — следующий урон усилен.";
+      state.playerTurnDisplay.damageLine = "—";
+      updateDicePanel();
+      return { hit: false, log: `${player.name}: «${skill.name}» — следующий успешный урон сильнее.` };
     }
     case "guard_heal": {
       player.guarding = true;
       const healed = Math.min(skill.heal, player.maxHp - player.hp);
       player.hp += healed;
       syncUI();
+      state.playerTurnDisplay.attackLine = "Укрытие + лечение.";
+      state.playerTurnDisplay.damageLine = `+${healed} HP`;
+      updateDicePanel();
       return { hit: false, log: `${player.name} «${skill.name}»: укрытие и +${healed} HP.` };
     }
     case "damage_heal": {
-      const r = executeAttack(player, enemy, {
-        mult: skill.mult,
-        label: `творит «${skill.name}»`,
-        attackerSide: "player",
+      const r = executeStrike(player, enemy, {
+        attackType: skill.attackType || "weapon",
+        diceCount: skill.diceCount,
         applyStatus: skill.applyStatus,
+        label: `«${skill.name}»`,
+        displayKey: "playerTurnDisplay",
       });
       const healed = Math.min(skill.heal, player.maxHp - player.hp);
       player.hp += healed;
       syncUI();
       return {
         hit: r.hit,
-        log: r.log.replace(/\.$/, "") + ` Второе дыхание: +${healed} HP.`,
+        log: r.hit ? `${r.log} Второе дыхание: +${healed} HP.` : r.log,
       };
     }
     case "debuff_enemy": {
       enemy.attackWeakNext = true;
       syncUI();
-      return { hit: false, log: `${player.name} «${skill.name}»: противник теряет опору — его следующий удар слабее.` };
+      state.playerTurnDisplay.attackLine = "Дебафф врага.";
+      state.playerTurnDisplay.damageLine = "—";
+      updateDicePanel();
+      return { hit: false, log: `${player.name} «${skill.name}»: следующий удар врага слабее.` };
     }
     case "mark_crit": {
       player.guaranteedCrit = true;
       syncUI();
-      return { hit: false, log: `${player.name} ставит «${skill.name}» — следующий удар по уязвимому месту.` };
+      state.playerTurnDisplay.attackLine = "Метка: следующий урон — удвоение d8.";
+      state.playerTurnDisplay.damageLine = "—";
+      updateDicePanel();
+      return { hit: false, log: `${player.name} ставит «${skill.name}» — следующее попадание нанесёт критический урон (2×d8).` };
     }
     case "lifesteal": {
       const before = enemy.hp;
-      const r = executeAttack(player, enemy, {
-        mult: skill.mult,
-        label: `творит «${skill.name}»`,
-        attackerSide: "player",
+      const r = executeStrike(player, enemy, {
+        attackType: skill.attackType || "weapon",
+        diceCount: skill.diceCount,
         applyStatus: skill.applyStatus,
+        label: `«${skill.name}»`,
+        displayKey: "playerTurnDisplay",
       });
+      if (!r.hit) {
+        return r;
+      }
       const dealt = before - enemy.hp;
       const healed = Math.min(Math.floor(dealt * skill.steal), player.maxHp - player.hp);
       player.hp += healed;
       syncUI();
       return {
-        hit: r.hit,
-        log: r.log.replace(/\.$/, "") + ` Высасывание жизни: +${healed} HP.`,
+        hit: true,
+        log: `${r.log} Высасывание: +${healed} HP.`,
       };
     }
     case "rage": {
       player.rageTurns = skill.rageTurns;
       syncUI();
+      state.playerTurnDisplay.attackLine = "Ярость: +2 к урону оружием.";
+      state.playerTurnDisplay.damageLine = `${skill.rageTurns} удара`;
+      updateDicePanel();
       return {
         hit: false,
-        log: `${player.name} впадает в «${skill.name}» (+20% к силе на ${skill.rageTurns} удара).`,
+        log: `${player.name} впадает в «${skill.name}» (+2 к урону оружием на ${skill.rageTurns} удара).`,
       };
     }
     default:
@@ -791,13 +963,13 @@ function executeHeroSkill(player, enemy, skillId) {
 function executeBossSkill(enemy, player, skillId) {
   const skill = findSkill(enemy, skillId);
   if (!skill) {
-    return executeAttack(enemy, player, { mult: 1, label: "бьёт", attackerSide: "enemy" });
+    return executeWeaponAttack(enemy, player, { label: "бьёт", diceCount: 1, displayKey: "enemyTurnDisplay" });
   }
   if (enemy.mana < skill.cost) {
-    return executeAttack(enemy, player, { mult: 1, label: "бьёт", attackerSide: "enemy" });
+    return executeWeaponAttack(enemy, player, { label: "бьёт", diceCount: 1, displayKey: "enemyTurnDisplay" });
   }
   if ((enemy.skillCd[skill.id] || 0) > 0) {
-    return executeAttack(enemy, player, { mult: 1, label: "бьёт", attackerSide: "enemy" });
+    return executeWeaponAttack(enemy, player, { label: "бьёт", diceCount: 1, displayKey: "enemyTurnDisplay" });
   }
 
   enemy.mana -= skill.cost;
@@ -806,26 +978,28 @@ function executeBossSkill(enemy, player, skillId) {
   }
 
   if (skill.heal) {
-    const r = executeAttack(enemy, player, {
-      mult: skill.mult,
-      label: `творит «${skill.name}»`,
-      attackerSide: "enemy",
+    const r = executeStrike(enemy, player, {
+      attackType: skill.attackType || "spell",
+      diceCount: skill.diceCount,
       applyStatus: skill.applyStatus,
+      label: `«${skill.name}»`,
+      displayKey: "enemyTurnDisplay",
     });
     const healed = Math.min(skill.heal, enemy.maxHp - enemy.hp);
     enemy.hp += healed;
     syncUI();
     return {
       hit: r.hit,
-      log: r.log.replace(/\.$/, "") + ` ${enemy.name} восстанавливает ${healed} HP.`,
+      log: r.hit ? `${r.log} ${enemy.name} восстанавливает ${healed} HP.` : r.log,
     };
   }
 
-  return executeAttack(enemy, player, {
-    mult: skill.mult,
-    label: `творит «${skill.name}»`,
-    attackerSide: "enemy",
+  return executeStrike(enemy, player, {
+    attackType: skill.attackType || "weapon",
+    diceCount: skill.diceCount,
     applyStatus: skill.applyStatus,
+    label: `«${skill.name}»`,
+    displayKey: "enemyTurnDisplay",
   });
 }
 
@@ -900,9 +1074,9 @@ function syncUI() {
     return;
   }
 
-  el.playerName.textContent = state.player.name;
+  el.playerName.textContent = `${state.player.name} · ${state.player.className}`;
   applySigil(el.playerAvatar, state.player);
-  el.playerHpText.textContent = `HP: ${state.player.hp}/${state.player.maxHp}`;
+  el.playerHpText.textContent = `HP: ${state.player.hp}/${state.player.maxHp} · КД ${state.player.ac}`;
   el.playerHpBar.style.width = `${(state.player.hp / state.player.maxHp) * 100}%`;
   el.playerManaText.textContent = `Мана: ${state.player.mana}/${state.player.maxMana}`;
   el.playerManaBar.style.width = `${(state.player.mana / state.player.maxMana) * 100}%`;
@@ -910,7 +1084,7 @@ function syncUI() {
     el.playerEffects.innerHTML = effectStripHtml(state.player);
   }
 
-  el.enemyName.textContent = state.enemy.name;
+  el.enemyName.textContent = `${state.enemy.name} · КД ${state.enemy.ac}`;
   applySigil(el.enemyAvatar, state.enemy);
   el.enemyHpText.textContent = `HP: ${state.enemy.hp}/${state.enemy.maxHp}`;
   el.enemyHpBar.style.width = `${(state.enemy.hp / state.enemy.maxHp) * 100}%`;

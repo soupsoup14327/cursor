@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./style.css?v=6" />
+    <link rel="stylesheet" href="./style.css?v=7" />
   </head>
   <body>
     <div id="toast-root" class="toast-root" aria-live="polite"></div>
@@ -33,17 +33,15 @@
 
       <section id="battle" class="panel hidden">
         <div class="dice-panel" id="dice-panel" aria-label="Броски кубиков">
-          <div class="dice-row">
+          <div class="dice-row dice-row--stack">
             <span class="dice-row__who">Ваш ход</span>
-            <span class="dice-badge" title="d20">d20: <strong id="dice-p-d20">—</strong></span>
-            <span class="dice-badge" title="d8">d8: <strong id="dice-p-d8">—</strong></span>
-            <span class="dice-row__hint" id="dice-p-bonus">бонус к урону: —</span>
+            <div class="dice-detail" id="dice-p-attack">Атака: —</div>
+            <div class="dice-detail" id="dice-p-damage">Урон (d8): —</div>
           </div>
-          <div class="dice-row">
+          <div class="dice-row dice-row--stack">
             <span class="dice-row__who">Ход врага</span>
-            <span class="dice-badge">d20: <strong id="dice-e-d20">—</strong></span>
-            <span class="dice-badge">d8: <strong id="dice-e-d8">—</strong></span>
-            <span class="dice-row__hint" id="dice-e-bonus">бонус: —</span>
+            <div class="dice-detail" id="dice-e-attack">Атака: —</div>
+            <div class="dice-detail" id="dice-e-damage">Урон (d8): —</div>
           </div>
         </div>
 
