@@ -446,7 +446,7 @@ h4 {
 
 .skill-bar {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
   gap: 6px;
 }
 
@@ -673,6 +673,161 @@ h4 {
 .fx-tag--cold {
   background: rgb(80 130 180 / 30%);
   color: #b8d8ff;
+}
+
+.dice-pref {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.dice-pref input {
+  accent-color: var(--gold);
+  width: 1rem;
+  height: 1rem;
+}
+
+.attack-dice-hint {
+  margin: 0 0 6px;
+  font-size: 0.78rem;
+  color: var(--moon);
+  font-weight: 600;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgb(0 0 0 / 62%);
+  backdrop-filter: blur(3px);
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal {
+  width: min(100%, 380px);
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid var(--panel-border);
+  background: linear-gradient(165deg, #2a2318, #1a1510);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 55%);
+}
+
+.modal__title {
+  margin: 0 0 12px;
+  font-family: Cinzel, serif;
+  font-size: 1rem;
+  color: var(--gold);
+  text-align: center;
+}
+
+.modal--dice .dice-stage {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  min-height: 88px;
+  margin-bottom: 10px;
+}
+
+.die-face {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Cinzel, serif;
+  font-weight: 700;
+  color: var(--parchment);
+  background: linear-gradient(145deg, #3a3228, #1e1a14);
+  border: 1px solid var(--gold-dim);
+  border-radius: 10px;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 35%);
+}
+
+.die-face--lg {
+  width: 72px;
+  height: 72px;
+  font-size: 2rem;
+}
+
+.die-face--sm {
+  width: 44px;
+  height: 44px;
+  font-size: 1.25rem;
+}
+
+.die-face--land {
+  animation: die-land 0.35s ease-out;
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+@keyframes die-land {
+  0% {
+    transform: scale(1.15) rotate(-2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+.dice-modal__detail {
+  margin: 0;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.scenario-modal__text {
+  margin: 0 0 14px;
+  line-height: 1.45;
+  color: var(--parchment);
+  font-size: 0.92rem;
+}
+
+.scenario-modal__choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scenario-choice-btn {
+  border: 1px solid var(--panel-border);
+  background: linear-gradient(180deg, #2a2318, #1a1510);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-align: left;
+  transition: border-color 0.2s ease, filter 0.12s ease;
+}
+
+.scenario-choice-btn:hover {
+  border-color: var(--gold-dim);
+  filter: brightness(1.06);
+}
+
+.skill-btn__dice {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--gold-dim);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
 }
 
 @media (width <= 860px) {

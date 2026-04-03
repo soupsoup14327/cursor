@@ -29,6 +29,45 @@ const SCENARIO_POPUPS = [
   "Камень под ногой сдвигается — вы успеваете вперёд.",
 ];
 
+const MICRO_SCENARIOS = [
+  {
+    title: "Провал в полу",
+    text: "Плесень шепчет чужие имена. Как действуете?",
+    choices: [
+      { label: "Пролезть быстро", log: "Сцена: ловкий проход — +2 к следующему броску атаки.", effects: { player: { sceneAttackBonus: 2 } } },
+      { label: "Осторожно обойти", log: "Сцена: вы переводите дух. +14 HP.", effects: { player: { heal: 14 } } },
+      { label: "Прислушаться к шёпоту", log: "Сцена: тьма касается вас — следующий удар по вам сильнее, зато противник на миг открыт (+1d8 при попадании).", effects: { player: { sceneCursed: true }, enemy: { sceneExposed: true } } },
+    ],
+  },
+  {
+    title: "Рычаг у стены",
+    text: "Ржавый рычаг торчит из камня. Тянуть?",
+    choices: [
+      { label: "Дёрнуть", log: "Сцена: грохот сбивает врага с толку. Его следующий бросок атаки с штрафом −2.", effects: { enemy: { sceneAttackPenalty: 2 } } },
+      { label: "Обойти стороной", log: "Сцена: вы экономите силы. +10 маны.", effects: { player: { mana: 10 } } },
+      { label: "Замочить механизм", log: "Сцена: щелчок — противник на миг уязвим (+1d8 к вашему следующему попаданию).", effects: { enemy: { sceneExposed: true } } },
+    ],
+  },
+  {
+    title: "Торговец призраков",
+    text: "Прозрачный голос предлагает сделку за один удар сердца.",
+    choices: [
+      { label: "Заплатить кровью", log: "Сцена: −12 HP, зато следующая атака с +2 к броску.", effects: { player: { hpCost: 12, sceneAttackBonus: 2 } } },
+      { label: "Отказаться", log: "Сцена: вы не вступаете в сделку.", effects: {} },
+      { label: "Обмануть", log: "Сцена: +8 маны, враг теряет бдительность (+1d8 при попадании).", effects: { player: { mana: 8 }, enemy: { sceneExposed: true } } },
+    ],
+  },
+  {
+    title: "Светящийся гриб",
+    text: "Гриб пульсирует мягким светом. Сорвать или оставить?",
+    choices: [
+      { label: "Сорвать и съесть", log: "Сцена: странный привкус — +18 HP, но проклятие на следующий удар врага по вам.", effects: { player: { heal: 18, sceneCursed: true } } },
+      { label: "Оставить", log: "Сцена: осторожность вознаграждается: +2 к следующей атаке.", effects: { player: { sceneAttackBonus: 2 } } },
+      { label: "Швырнуть во врага", log: "Сцена: враг дезориентирован (−2 к его атаке).", effects: { enemy: { sceneAttackPenalty: 2 } } },
+    ],
+  },
+];
+
 const heroes = [
   {
     id: "solaris",
@@ -244,6 +283,16 @@ const el = {
   diceEAttack: document.querySelector("#dice-e-attack"),
   diceEDamage: document.querySelector("#dice-e-damage"),
   toastRoot: document.querySelector("#toast-root"),
+  diceModal: document.querySelector("#dice-modal"),
+  diceModalTitle: document.querySelector("#dice-modal-title"),
+  diceStage: document.querySelector("#dice-stage"),
+  diceModalDetail: document.querySelector("#dice-modal-detail"),
+  scenarioModal: document.querySelector("#scenario-modal"),
+  scenarioModalTitle: document.querySelector("#scenario-modal-title"),
+  scenarioModalText: document.querySelector("#scenario-modal-text"),
+  scenarioModalChoices: document.querySelector("#scenario-modal-choices"),
+  diceAuto: document.querySelector("#dice-auto"),
+  attackDiceHint: document.querySelector("#attack-dice-hint"),
 };
 
 renderHeroPicker();
@@ -263,6 +312,133 @@ function rollNd8(n) {
     rolls.push(rollD8());
   }
   return { rolls, sum: rolls.reduce((a, b) => a + b, 0) };
+}
+
+function getDiceAuto() {
+  return localStorage.getItem("moduleBattleDiceAuto") !== "false";
+}
+
+function setDiceAuto(v) {
+  localStorage.setItem("moduleBattleDiceAuto", v ? "true" : "false");
+}
+
+function openDiceModal() {
+  if (!el.diceModal) {
+    return;
+  }
+  el.diceModal.classList.remove("hidden");
+  el.diceModal.setAttribute("aria-hidden", "false");
+}
+
+function closeDiceModal() {
+  if (!el.diceModal) {
+    return;
+  }
+  el.diceModal.classList.add("hidden");
+  el.diceModal.setAttribute("aria-hidden", "true");
+}
+
+async function animateD20Roll(finalValue) {
+  if (getDiceAuto()) {
+    return;
+  }
+  openDiceModal();
+  if (el.diceModalTitle) {
+    el.diceModalTitle.textContent = "Бросок d20 — атака";
+  }
+  if (el.diceStage) {
+    el.diceStage.innerHTML = `<div class="die-face die-face--lg" id="die-d20-face">?</div>`;
+  }
+  if (el.diceModalDetail) {
+    el.diceModalDetail.textContent = "";
+  }
+  const face = document.getElementById("die-d20-face");
+  await new Promise((resolve) => {
+    let steps = 0;
+    const t = setInterval(() => {
+      if (face) {
+        face.textContent = String(1 + Math.floor(Math.random() * 20));
+      }
+      steps++;
+      if (steps > 16) {
+        clearInterval(t);
+        if (face) {
+          face.textContent = String(finalValue);
+          face.classList.add("die-face--land");
+        }
+        if (el.diceModalDetail) {
+          el.diceModalDetail.textContent = `Результат: ${finalValue}`;
+        }
+        setTimeout(() => {
+          closeDiceModal();
+          resolve();
+        }, 520);
+      }
+    }, 42);
+  });
+}
+
+async function animateNd8Rolls(result) {
+  if (getDiceAuto()) {
+    return;
+  }
+  openDiceModal();
+  if (el.diceModalTitle) {
+    el.diceModalTitle.textContent = `Урон: ${result.rolls.length}d8`;
+  }
+  if (el.diceStage) {
+    el.diceStage.innerHTML = result.rolls
+      .map((_, i) => `<span class="die-face die-face--sm" id="d8-face-${i}">?</span>`)
+      .join("");
+  }
+  if (el.diceModalDetail) {
+    el.diceModalDetail.textContent = "";
+  }
+  await new Promise((resolve) => {
+    let steps = 0;
+    const t = setInterval(() => {
+      result.rolls.forEach((_, i) => {
+        const eld = document.getElementById(`d8-face-${i}`);
+        if (eld) {
+          eld.textContent = String(1 + Math.floor(Math.random() * 8));
+        }
+      });
+      steps++;
+      if (steps > 16) {
+        clearInterval(t);
+        result.rolls.forEach((v, i) => {
+          const eld = document.getElementById(`d8-face-${i}`);
+          if (eld) {
+            eld.textContent = String(v);
+            eld.classList.add("die-face--land");
+          }
+        });
+        if (el.diceModalDetail) {
+          el.diceModalDetail.textContent = `Сумма костей: ${result.sum} (+ модификатор в журнале)`;
+        }
+        setTimeout(() => {
+          closeDiceModal();
+          resolve();
+        }, 560);
+      }
+    }, 42);
+  });
+}
+
+async function rollD20Interactive() {
+  const v = rollD20();
+  await animateD20Roll(v);
+  return v;
+}
+
+async function rollNd8Interactive(n) {
+  const rolls = [];
+  for (let i = 0; i < n; i++) {
+    rolls.push(rollD8());
+  }
+  const result = { rolls, sum: rolls.reduce((a, b) => a + b, 0) };
+  await animateNd8Rolls(result);
+  return result;
 }
 
 function pickRandomBoss() {
@@ -294,6 +470,81 @@ function maybeRandomScenarioPopup() {
   }
 }
 
+function applyScenarioChoiceEffects(ch) {
+  const eff = ch.effects;
+  if (!eff) {
+    return;
+  }
+  const { player: p, enemy: e } = eff;
+  if (p) {
+    if (p.sceneAttackBonus) {
+      state.player.sceneAttackBonus += p.sceneAttackBonus;
+    }
+    if (p.sceneCursed) {
+      state.player.sceneCursed = true;
+    }
+    if (p.heal) {
+      state.player.hp = Math.min(state.player.maxHp, state.player.hp + p.heal);
+    }
+    if (p.hpCost) {
+      state.player.hp = Math.max(1, state.player.hp - p.hpCost);
+    }
+    if (p.mana) {
+      state.player.mana = Math.min(state.player.maxMana, state.player.mana + p.mana);
+    }
+  }
+  if (e) {
+    if (e.sceneAttackPenalty) {
+      state.enemy.sceneAttackPenalty += e.sceneAttackPenalty;
+    }
+    if (e.sceneExposed) {
+      state.enemy.sceneExposed = true;
+    }
+  }
+  syncUI();
+}
+
+function showScenarioModal(scenario) {
+  return new Promise((resolve) => {
+    if (!el.scenarioModal || !el.scenarioModalTitle || !el.scenarioModalText || !el.scenarioModalChoices) {
+      resolve();
+      return;
+    }
+    el.scenarioModalTitle.textContent = scenario.title;
+    el.scenarioModalText.textContent = scenario.text;
+    el.scenarioModalChoices.innerHTML = "";
+    el.scenarioModal.classList.remove("hidden");
+    el.scenarioModal.setAttribute("aria-hidden", "false");
+    scenario.choices.forEach((ch) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "scenario-choice-btn";
+      b.textContent = ch.label;
+      b.addEventListener("click", () => {
+        applyScenarioChoiceEffects(ch);
+        if (ch.log) {
+          appendLog(ch.log);
+        }
+        el.scenarioModal.classList.add("hidden");
+        el.scenarioModal.setAttribute("aria-hidden", "true");
+        resolve();
+      });
+      el.scenarioModalChoices.appendChild(b);
+    });
+  });
+}
+
+async function maybeMicroScenarioAtTurnStart() {
+  if (state.round < 2) {
+    return;
+  }
+  if (Math.random() > 0.24) {
+    return;
+  }
+  const scenario = MICRO_SCENARIOS[Math.floor(Math.random() * MICRO_SCENARIOS.length)];
+  await showScenarioModal(scenario);
+}
+
 function applySigil(domEl, fighter) {
   if (!domEl || !fighter) {
     return;
@@ -319,20 +570,29 @@ function attackBonusTotal(attacker, attackType) {
   return { prof, mod, adv, total: prof + mod + adv };
 }
 
-function resolveAttackRoll(attacker, defender, attackType) {
-  const d20 = rollD20();
+async function resolveAttackRoll(attacker, defender, attackType) {
+  const d20 = await rollD20Interactive();
   const { prof, mod, adv, total: bonus } = attackBonusTotal(attacker, attackType);
-  const total = d20 + bonus;
+  let sceneExtra = 0;
+  if (attacker.sceneAttackBonus) {
+    sceneExtra += attacker.sceneAttackBonus;
+    attacker.sceneAttackBonus = 0;
+  }
+  if (attacker.sceneAttackPenalty) {
+    sceneExtra -= attacker.sceneAttackPenalty;
+    attacker.sceneAttackPenalty = 0;
+  }
+  const total = d20 + bonus + sceneExtra;
   const ac = defender.ac;
 
   if (d20 === 1) {
-    return { d20, bonus, total, ac, hit: false, isCrit: false, isFumble: true, adv };
+    return { d20, bonus, sceneExtra, total, ac, hit: false, isCrit: false, isFumble: true, adv };
   }
   if (d20 === 20) {
-    return { d20, bonus, total, ac, hit: true, isCrit: true, isFumble: false, adv };
+    return { d20, bonus, sceneExtra, total, ac, hit: true, isCrit: true, isFumble: false, adv };
   }
   const hit = total >= ac;
-  return { d20, bonus, total, ac, hit, isCrit: false, isFumble: false, adv };
+  return { d20, bonus, sceneExtra, total, ac, hit, isCrit: false, isFumble: false, adv };
 }
 
 function formatAttackLine(sideLabel, ar, defenderName) {
@@ -340,16 +600,20 @@ function formatAttackLine(sideLabel, ar, defenderName) {
     return `${sideLabel}: —`;
   }
   const advText = ar.adv ? " преим." : "";
+  const se =
+    ar.sceneExtra !== 0 && ar.sceneExtra !== undefined
+      ? ` ${ar.sceneExtra > 0 ? "+" : ""}${ar.sceneExtra} сцена`
+      : "";
   if (ar.isFumble) {
     return `${sideLabel}: d20=${ar.d20} — автоматический промах.`;
   }
   if (ar.isCrit) {
-    return `${sideLabel}: d20=${ar.d20} + ${ar.bonus}${advText} = ${ar.total} vs КД ${ar.ac} (${defenderName}) — критическое попадание!`;
+    return `${sideLabel}: d20=${ar.d20} + ${ar.bonus}${advText}${se} = ${ar.total} vs КД ${ar.ac} (${defenderName}) — крит!`;
   }
   if (ar.hit) {
-    return `${sideLabel}: d20=${ar.d20} + ${ar.bonus}${advText} = ${ar.total} vs КД ${ar.ac} — попадание.`;
+    return `${sideLabel}: d20=${ar.d20} + ${ar.bonus}${advText}${se} = ${ar.total} vs КД ${ar.ac} — попадание.`;
   }
-  return `${sideLabel}: d20=${ar.d20} + ${ar.bonus}${advText} = ${ar.total} vs КД ${ar.ac} — мимо.`;
+  return `${sideLabel}: d20=${ar.d20} + ${ar.bonus}${advText}${se} = ${ar.total} vs КД ${ar.ac} — мимо.`;
 }
 
 function getDamageMod(attacker, attackType) {
@@ -360,7 +624,7 @@ function getDamageMod(attacker, attackType) {
   return m;
 }
 
-function resolveDamageStrike(attacker, defender, opts) {
+async function resolveDamageStrike(attacker, defender, opts) {
   const { attackType, diceCount, applyStatus, label, ar } = opts;
   let crit = ar.isCrit;
   if (attacker === state.player && attacker.guaranteedCrit) {
@@ -369,8 +633,14 @@ function resolveDamageStrike(attacker, defender, opts) {
   }
 
   const mod = getDamageMod(attacker, attackType);
-  const nDice = crit ? diceCount * 2 : diceCount;
-  const { rolls, sum } = rollNd8(nDice);
+  const nDiceBase = crit ? diceCount * 2 : diceCount;
+  let exposeExtra = 0;
+  if (defender.sceneExposed && attacker === state.player && defender === state.enemy) {
+    exposeExtra = 1;
+    defender.sceneExposed = false;
+  }
+  const rollCount = nDiceBase + exposeExtra;
+  const { rolls, sum } = await rollNd8Interactive(rollCount);
   let damage = sum + mod;
 
   if (attacker === state.player && attacker.nextDamageMult !== 1) {
@@ -387,6 +657,11 @@ function resolveDamageStrike(attacker, defender, opts) {
   if (attacker === state.enemy && attacker.attackWeakNext) {
     damage = Math.round(damage * 0.62);
     attacker.attackWeakNext = false;
+  }
+
+  if (defender === state.player && defender.sceneCursed && attacker === state.enemy) {
+    damage = Math.round(damage * 1.25);
+    defender.sceneCursed = false;
   }
 
   const spread = Math.floor(Math.random() * 3);
@@ -406,10 +681,11 @@ function resolveDamageStrike(attacker, defender, opts) {
   syncUI();
 
   const rollsStr = rolls.join("+");
-  const critTag = crit ? " Крит — удвоены кости d8." : "";
+  const critTag = crit ? " Крит — удвоены d8." : "";
+  const exposeTag = exposeExtra ? " +1d8 уязвимость." : "";
   const guardNote = opts.wasGuarding ? " Укрытие: половина урона." : "";
 
-  const dmgLine = `${diceCount}d8${crit ? `→${nDice}d8` : ""}: [${rollsStr}] + ${mod} = ${damage}${critTag}`;
+  const dmgLine = `${diceCount}d8${crit ? `→${nDiceBase}d8` : ""}${exposeTag} [${rollsStr}] + ${mod} = ${damage}${critTag}`;
 
   return {
     hit: true,
@@ -418,9 +694,9 @@ function resolveDamageStrike(attacker, defender, opts) {
   };
 }
 
-function executeWeaponAttack(attacker, defender, opts) {
+async function executeWeaponAttack(attacker, defender, opts) {
   const attackType = "weapon";
-  const ar = resolveAttackRoll(attacker, defender, attackType);
+  const ar = await resolveAttackRoll(attacker, defender, attackType);
   state[opts.displayKey || "playerTurnDisplay"].attackLine = formatAttackLine("Атака", ar, defender.name);
   state[opts.displayKey || "playerTurnDisplay"].damageLine = ar.hit ? "…" : "Урон: —";
 
@@ -434,7 +710,7 @@ function executeWeaponAttack(attacker, defender, opts) {
   }
 
   const diceCount = opts.diceCount ?? 1;
-  const r = resolveDamageStrike(attacker, defender, {
+  const r = await resolveDamageStrike(attacker, defender, {
     attackType,
     diceCount,
     applyStatus: opts.applyStatus,
@@ -457,9 +733,9 @@ function formatAttackLog(ar, defenderName) {
   return ``;
 }
 
-function executeStrike(attacker, defender, opts) {
+async function executeStrike(attacker, defender, opts) {
   const { attackType, diceCount, applyStatus, label, displayKey } = opts;
-  const ar = resolveAttackRoll(attacker, defender, attackType);
+  const ar = await resolveAttackRoll(attacker, defender, attackType);
   const dk = displayKey || "playerTurnDisplay";
   state[dk].attackLine = formatAttackLine("Атака", ar, defender.name);
   state[dk].damageLine = ar.hit ? "…" : "Урон: —";
@@ -473,7 +749,7 @@ function executeStrike(attacker, defender, opts) {
     };
   }
 
-  const r = resolveDamageStrike(attacker, defender, {
+  const r = await resolveDamageStrike(attacker, defender, {
     attackType,
     diceCount,
     applyStatus,
@@ -517,6 +793,10 @@ function cloneFighter(template, isPlayer) {
     attackWeakNext: false,
     statusEffects: [],
     nextDamageTakenMod: 1,
+    sceneAttackBonus: 0,
+    sceneAttackPenalty: 0,
+    sceneExposed: false,
+    sceneCursed: false,
   };
   if (isPlayer) {
     f.skillList = template.skills;
@@ -606,6 +886,49 @@ function renderHeroPicker() {
   });
 }
 
+function skillDiceHint(player, skill) {
+  if (!player || !skill) {
+    return "";
+  }
+  if (skill.kind === "damage" || skill.kind === "lifesteal" || skill.kind === "damage_heal") {
+    const at = skill.attackType || "spell";
+    const atk = attackBonusTotal(player, at);
+    const dm = getDamageMod(player, at);
+    const n = skill.diceCount;
+    const kind = at === "spell" ? "закл." : "оруж.";
+    return `${kind} d20+${atk.total} · ${n}d8+${dm}`;
+  }
+  if (skill.kind === "heal") {
+    return `+${skill.heal} HP`;
+  }
+  if (skill.kind === "buff_next") {
+    return `урон ×${skill.nextMult}`;
+  }
+  if (skill.kind === "guard_heal") {
+    return `укрыт · +${skill.heal} HP`;
+  }
+  if (skill.kind === "debuff_enemy") {
+    return "враг −сила";
+  }
+  if (skill.kind === "mark_crit") {
+    return "2×d8 след.";
+  }
+  if (skill.kind === "rage") {
+    return `оруж. +2 · ${skill.rageTurns} уд.`;
+  }
+  return "";
+}
+
+function updateAttackDiceHint() {
+  if (!el.attackDiceHint || !state.player) {
+    return;
+  }
+  const p = state.player;
+  const w = attackBonusTotal(p, "weapon");
+  const dm = getDamageMod(p, "weapon");
+  el.attackDiceHint.textContent = `Удар: d20+${w.total} · 1d8+${dm} (оружие)`;
+}
+
 function renderSkillBar() {
   el.skillBar.innerHTML = "";
   if (!state.player?.skillList) {
@@ -616,9 +939,12 @@ function renderSkillBar() {
     btn.type = "button";
     btn.className = "skill-btn";
     btn.dataset.skillId = skill.id;
-    btn.innerHTML = `<span class="skill-btn__name">${skill.name}</span><span class="skill-btn__cost">${skill.cost} маны</span>`;
+    const hint = skillDiceHint(state.player, skill);
+    btn.innerHTML = `<span class="skill-btn__name">${skill.name}</span><span class="skill-btn__dice">${hint}</span><span class="skill-btn__cost">${skill.cost} маны</span>`;
     btn.title = skillTip(skill);
-    btn.addEventListener("click", () => runTurn("skill", skill.id));
+    btn.addEventListener("click", () => {
+      void runTurn("skill", skill.id);
+    });
     el.skillBar.appendChild(btn);
   });
 }
@@ -675,6 +1001,9 @@ function startBattle(heroTemplate) {
   el.heroPicker.classList.add("hidden");
   el.battle.classList.remove("hidden");
   el.restartBtn.classList.add("hidden");
+  if (el.diceAuto) {
+    el.diceAuto.checked = getDiceAuto();
+  }
   renderSkillBar();
   toggleActions(false);
   resetLog();
@@ -686,8 +1015,16 @@ function startBattle(heroTemplate) {
 
 function wireActions() {
   el.baseActions.forEach((btn) => {
-    btn.addEventListener("click", () => runTurn(btn.dataset.action));
+    btn.addEventListener("click", () => {
+      void runTurn(btn.dataset.action);
+    });
   });
+  if (el.diceAuto) {
+    el.diceAuto.checked = getDiceAuto();
+    el.diceAuto.addEventListener("change", () => {
+      setDiceAuto(el.diceAuto.checked);
+    });
+  }
   el.restartBtn.addEventListener("click", () => {
     el.heroPicker.classList.remove("hidden");
     el.battle.classList.add("hidden");
@@ -698,7 +1035,7 @@ function wireActions() {
   });
 }
 
-function runTurn(playerAction, skillId = null) {
+async function runTurn(playerAction, skillId = null) {
   if (state.finished || state.busy) {
     return;
   }
@@ -712,11 +1049,13 @@ function runTurn(playerAction, skillId = null) {
   state.busy = true;
   toggleActions(true);
 
+  await maybeMicroScenarioAtTurnStart();
+
   state.player.guarding = playerAction === "guard";
   let playerResult;
 
   if (playerAction === "attack") {
-    playerResult = executeWeaponAttack(state.player, state.enemy, {
+    playerResult = await executeWeaponAttack(state.player, state.enemy, {
       label: "бьёт",
       diceCount: 1,
       displayKey: "playerTurnDisplay",
@@ -727,7 +1066,7 @@ function runTurn(playerAction, skillId = null) {
     state.playerTurnDisplay.damageLine = "Урон: —";
     updateDicePanel();
   } else if (playerAction === "skill") {
-    playerResult = executeHeroSkill(state.player, state.enemy, skillId);
+    playerResult = await executeHeroSkill(state.player, state.enemy, skillId);
   } else {
     playerResult = { hit: false, log: "…" };
   }
@@ -748,7 +1087,7 @@ function runTurn(playerAction, skillId = null) {
     return;
   }
 
-  setTimeout(() => {
+  setTimeout(async () => {
     state.enemyTurnDisplay = { attackLine: "", damageLine: "" };
     if (Math.random() < 0.28) {
       showToast(SCENARIO_POPUPS[Math.floor(Math.random() * SCENARIO_POPUPS.length)]);
@@ -758,7 +1097,7 @@ function runTurn(playerAction, skillId = null) {
     state.enemy.guarding = enemyMove.type === "guard";
     let enemyResult;
     if (enemyMove.type === "attack") {
-      enemyResult = executeWeaponAttack(state.enemy, state.player, {
+      enemyResult = await executeWeaponAttack(state.enemy, state.player, {
         label: "бьёт",
         diceCount: 1,
         displayKey: "enemyTurnDisplay",
@@ -769,7 +1108,7 @@ function runTurn(playerAction, skillId = null) {
       state.enemyTurnDisplay.damageLine = "Урон: —";
       updateDicePanel();
     } else {
-      enemyResult = executeBossSkill(state.enemy, state.player, enemyMove.skillId);
+      enemyResult = await executeBossSkill(state.enemy, state.player, enemyMove.skillId);
     }
 
     if (enemyResult.hit) {
@@ -836,7 +1175,7 @@ function findSkill(fighter, skillId) {
   return fighter.skillList.find((s) => s.id === skillId);
 }
 
-function executeHeroSkill(player, enemy, skillId) {
+async function executeHeroSkill(player, enemy, skillId) {
   const skill = findSkill(player, skillId);
   if (!skill) {
     return { hit: false, log: "Неизвестный приём." };
@@ -891,7 +1230,7 @@ function executeHeroSkill(player, enemy, skillId) {
       return { hit: false, log: `${player.name} «${skill.name}»: укрытие и +${healed} HP.` };
     }
     case "damage_heal": {
-      const r = executeStrike(player, enemy, {
+      const r = await executeStrike(player, enemy, {
         attackType: skill.attackType || "weapon",
         diceCount: skill.diceCount,
         applyStatus: skill.applyStatus,
@@ -924,7 +1263,7 @@ function executeHeroSkill(player, enemy, skillId) {
     }
     case "lifesteal": {
       const before = enemy.hp;
-      const r = executeStrike(player, enemy, {
+      const r = await executeStrike(player, enemy, {
         attackType: skill.attackType || "weapon",
         diceCount: skill.diceCount,
         applyStatus: skill.applyStatus,
@@ -960,7 +1299,7 @@ function executeHeroSkill(player, enemy, skillId) {
   }
 }
 
-function executeBossSkill(enemy, player, skillId) {
+async function executeBossSkill(enemy, player, skillId) {
   const skill = findSkill(enemy, skillId);
   if (!skill) {
     return executeWeaponAttack(enemy, player, { label: "бьёт", diceCount: 1, displayKey: "enemyTurnDisplay" });
@@ -978,7 +1317,7 @@ function executeBossSkill(enemy, player, skillId) {
   }
 
   if (skill.heal) {
-    const r = executeStrike(enemy, player, {
+    const r = await executeStrike(enemy, player, {
       attackType: skill.attackType || "spell",
       diceCount: skill.diceCount,
       applyStatus: skill.applyStatus,
@@ -1112,6 +1451,8 @@ function syncUI() {
       nameEl.textContent = sk.name;
     }
   });
+
+  updateAttackDiceHint();
 }
 
 const DAMAGE_ANIM_MS = 360;
