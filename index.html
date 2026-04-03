@@ -25,7 +25,7 @@
 
     <div id="scenario-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-hidden="true">
       <div class="modal modal--scenario">
-        <p class="modal__title" id="scenario-modal-title">Сцена</p>
+        <p class="modal__title" id="scenario-modal-title">Момент боя</p>
         <p class="scenario-modal__text" id="scenario-modal-text"></p>
         <div class="scenario-modal__choices" id="scenario-modal-choices"></div>
       </div>
@@ -35,10 +35,10 @@
     <div class="bg-glow bg-glow--moon"></div>
     <main class="layout">
       <header class="panel header">
-        <p class="header__tag">Настольная сцена · пошаговый бой</p>
+        <p class="header__tag">Пошаговая схватка · только бой</p>
         <h1>Module battle</h1>
         <p class="header__lead">
-          Выбери героя, брось вызов случайному врагу из модуля и переживи столкновение.
+          Выбери героя и вступи в бой со случайным противником: каждый ход — удар, укрытие или приём, без походов и карты.
         </p>
       </header>
 
@@ -78,7 +78,7 @@
               <div id="player-mana-bar" class="mana-bar"></div>
             </div>
             <p id="player-mana-text" class="mana-text">Мана: 0/0</p>
-            <p id="player-status" class="status">Готов к сцене</p>
+            <p id="player-status" class="status">Готов к схватке</p>
           </article>
 
           <div class="versus" role="presentation">
@@ -106,7 +106,7 @@
           <div class="controls-row">
             <button class="action-btn" data-action="attack">Удар оружием</button>
             <button class="action-btn" data-action="guard">Укрытие / парирование</button>
-            <button id="restart-btn" class="action-btn restart hidden">Новая сцена</button>
+            <button id="restart-btn" class="action-btn restart hidden">Новый бой</button>
           </div>
           <div id="skill-bar" class="skill-bar" aria-label="Заклинания и приёмы"></div>
         </section>
@@ -118,7 +118,7 @@
         </section>
 
         <section class="log-wrap">
-          <h4>Журнал столкновения</h4>
+          <h4>Журнал боя</h4>
           <ul id="battle-log"></ul>
         </section>
       </section>
