@@ -428,15 +428,16 @@ function skillTip(s) {
 function updateDiceUI(whichSide) {
   if (whichSide === "player" || whichSide === "both") {
     const d = state.playerTurnDice;
-    const b = diceBonus(d.d20, d.d8);
+    const has = d.d20 > 0;
+    const b = has ? diceBonus(d.d20, d.d8) : 0;
     if (el.dicePD20) {
-      el.dicePD20.textContent = String(d.d20);
+      el.dicePD20.textContent = has ? String(d.d20) : "—";
     }
     if (el.dicePD8) {
-      el.dicePD8.textContent = String(d.d8);
+      el.dicePD8.textContent = has ? String(d.d8) : "—";
     }
     if (el.dicePBonus) {
-      el.dicePBonus.textContent = `бонус к урону: +${b}`;
+      el.dicePBonus.textContent = has ? `бонус к урону: +${b}` : "бонус к урону: —";
     }
   }
   if (whichSide === "enemy" || whichSide === "both") {
@@ -463,7 +464,7 @@ function startBattle(heroTemplate) {
   state.combo = 0;
   state.finished = false;
   state.busy = false;
-  state.playerTurnDice = { d20: rollD20(), d8: rollD8() };
+  state.playerTurnDice = { d20: 0, d8: 0 };
   state.enemyTurnDice = { d20: 0, d8: 0 };
   el.heroPicker.classList.add("hidden");
   el.battle.classList.remove("hidden");
@@ -473,7 +474,6 @@ function startBattle(heroTemplate) {
   resetLog();
   appendLog(randomFlavor());
   appendLog(`Столкновение: ${state.player.name} против ${state.enemy.name}.`);
-  appendLog(`Ваш бросок: d20=${state.playerTurnDice.d20}, d8=${state.playerTurnDice.d8} (бонус к урону +${diceBonus(state.playerTurnDice.d20, state.playerTurnDice.d8)}).`);
   updateDiceUI("both");
   syncUI();
 }
